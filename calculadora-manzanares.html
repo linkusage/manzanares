@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Calculadora — Parcelación Manzanares</title>
+<style>
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+/* ===== TOKENS ===== */
+:root {
+  --gold:   #B8976A;
+  --goldlt: #F2E8D5;
+  --cream:  #FDFAF5;
+  --bg:     #F4F0E8;
+  --white:  #FFFFFF;
+  --dark:   #1C2420;
+  --text:   #2C3530;
+  --mid:    #5A6860;
+  --dim:    #8A9890;
+  --border: #DDD5C8;
+  --green:  #2E7D52;
+  --greenlt:#E8F5EE;
+  --red:    #B03020;
+  --blue:   #1A4F72;
+  --bluelt: #EBF5FB;
+  --rad:    10px;
+  --radlg:  14px;
+}
+
+/* ===== BASE ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.hdr {
+  background: var(--dark);
+  padding: 24px 20px 20px;
+  text-align: center;
+  border-bottom: 3px solid var(--gold);
+}
+.hdr-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.hdr h1 {
+  font-size: clamp(22px, 5vw, 36px);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.2;
+}
+.hdr h1 b { font-weight: 700; color: #D4B98A; }
+.hdr p { font-size: 14px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+
+/* ===== PAGE ===== */
+.page { max-width: 820px; margin: 0 auto; padding: 24px 14px 60px; }
+
+/* ===== SECTION ===== */
+.sec-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 28px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ===== CARD ===== */
+.card {
+  background: var(--white);
+  border-radius: var(--radlg);
+  border: 1px solid var(--border);
+  padding: 22px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+/* ===== FIELD ===== */
+.field { margin-bottom: 20px; }
+.field:last-child { margin-bottom: 0; }
+.lbl {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.hint {
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* ===== MONEY INPUT ===== */
+.money-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: var(--rad);
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.money-wrap:focus-within { border-color: var(--gold); }
+.money-sign {
+  padding: 0 10px 0 14px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+}
+.money-input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 14px 14px 0;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  -webkit-appearance: none;
+}
+.money-input::placeholder { color: #C0B8AC; font-weight: 400; font-size: 16px; }
+
+/* ===== PCT BADGE ===== */
+.pct-badge {
+  background: var(--goldlt);
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: var(--rad);
+  min-width: 58px;
+  text-align: center;
+  border: 1px solid rgba(184,151,106,.3);
+  flex-shrink: 0;
+}
+
+/* ===== FINANCED BOX ===== */
+.fin-box {
+  margin-top: 14px;
+  background: var(--greenlt);
+  border: 1px solid #9BCDB0;
+  border-radius: var(--rad);
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--green);
+  font-weight: 600;
+}
+
+/* ===== SLIDER ===== */
+.slider-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.slider-lbl { font-size: 12px; color: var(--dim); white-space: nowrap; }
+input[type=range] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px; height: 28px;
+  background: var(--gold);
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  box-shadow: 0 1px 6px rgba(0,0,0,.25);
+  cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 26px; height: 26px;
+  background: var(--gold);
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  cursor: pointer;
+}
+
+/* ===== RATE INPUT ===== */
+.rate-row { display: flex; gap: 12px; align-items: stretch; }
+.rate-box { position: relative; width: 140px; flex-shrink: 0; }
+.rate-box input {
+  width: 100%;
+  height: 100%;
+  min-height: 60px;
+  padding: 10px 36px 10px 14px;
+  font-size: 26px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: var(--rad);
+  color: var(--text);
+  outline: none;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color .15s;
+}
+.rate-box input:focus { border-color: var(--gold); }
+.rate-box input::-webkit-outer-spin-button,
+.rate-box input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.rate-pct {
+  position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px; font-weight: 700; color: var(--gold);
+  pointer-events: none;
+}
+.rate-info {
+  flex: 1;
+  background: var(--greenlt);
+  border: 1px solid #9BCDB0;
+  border-radius: var(--rad);
+  padding: 12px 14px;
+  color: var(--green);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.rate-info-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; opacity: .7; margin-bottom: 2px; }
+.rate-info-val { font-size: 22px; font-weight: 800; }
+
+/* ===== PILL BUTTONS ===== */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  padding: 12px 20px;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mid);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  transition: background .15s, border-color .15s, color .15s;
+  outline: none;
+}
+.pill.on { background: var(--dark); border-color: var(--dark); color: var(--white); }
+
+/* ===== SYSTEM CARDS ===== */
+.sys-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.sys-card {
+  padding: 16px 10px;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: var(--rad);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  text-align: center;
+  transition: background .15s, border-color .15s;
+  outline: none;
+}
+.sys-card.on { background: var(--dark); border-color: var(--dark); }
+.sys-card.on .sc-t { color: var(--white); }
+.sys-card.on .sc-d { color: rgba(255,255,255,.5); }
+.sc-ic { font-size: 24px; margin-bottom: 6px; line-height: 1; }
+.sc-t  { font-size: 14px; font-weight: 700; color: var(--text); }
+.sc-d  { font-size: 12px; color: var(--dim); margin-top: 3px; line-height: 1.3; }
+
+/* ===== SELECT ===== */
+.sel-wrap { position: relative; }
+select {
+  width: 100%;
+  padding: 14px 44px 14px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 500;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: var(--rad);
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color .15s;
+}
+select:focus { border-color: var(--gold); }
+.sel-arrow {
+  position: absolute; right: 14px; top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 14px;
+  color: var(--gold);
+}
+
+/* ===== TEXT INPUT ===== */
+input[type=text] {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--cream);
+  border: 2px solid var(--border);
+  border-radius: var(--rad);
+  color: var(--text);
+  outline: none;
+  -webkit-appearance: none;
+  transition: border-color .15s;
+}
+input[type=text]:focus { border-color: var(--gold); }
+input[type=text]::placeholder { color: var(--dim); }
+
+/* ===== ALERT ===== */
+.alert-box {
+  background: #FEF3CD;
+  border: 1px solid #FBBF24;
+  border-radius: var(--rad);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #7C4C00;
+  margin-bottom: 12px;
+  display: none;
+}
+
+/* ===== CALC BUTTON ===== */
+.calc-btn {
+  width: 100%;
+  padding: 18px;
+  background: var(--dark);
+  color: var(--white);
+  border: none;
+  border-radius: var(--rad);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  margin-top: 10px;
+  outline: none;
+  transition: background .15s;
+}
+.calc-btn:active { background: #3a4d40; }
+
+/* ===== RESULTS ===== */
+#results { display: none; }
+
+/* ===== KPI GRID ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.kpi {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radlg);
+  padding: 16px 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.05);
+  border-top: 4px solid var(--border);
+}
+.kpi.k-gold  { border-top-color: var(--gold); }
+.kpi.k-green { border-top-color: var(--green); }
+.kpi.k-red   { border-top-color: var(--red); }
+.kpi.k-blue  { border-top-color: var(--blue); }
+.kpi-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--dim); margin-bottom: 6px; }
+.kpi-val {
+  font-size: clamp(17px, 4vw, 24px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text);
+  word-break: break-all;
+}
+.kpi.k-gold  .kpi-val { color: var(--gold); }
+.kpi.k-green .kpi-val { color: var(--green); }
+.kpi.k-red   .kpi-val { color: var(--red); }
+.kpi.k-blue  .kpi-val { color: var(--blue); }
+.kpi-sub { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+/* ===== CHART ===== */
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radlg);
+  padding: 20px 16px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.05);
+}
+.chart-ttl { font-size: 13px; font-weight: 700; color: var(--mid); margin-bottom: 14px; }
+.bars { display: flex; align-items: flex-end; gap: 4px; height: 100px; }
+.bar-g { flex: 1; display: flex; flex-direction: column-reverse; }
+.bar-c { background: var(--green); opacity: .75; min-height: 2px; border-radius: 2px 2px 0 0; }
+.bar-i { background: var(--red);   opacity: .60; min-height: 2px; }
+.bar-l { font-size: 9px; color: var(--dim); text-align: center; margin-top: 5px; overflow: hidden; white-space: nowrap; }
+.legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--mid); }
+.leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ===== NOTA ===== */
+.nota {
+  background: var(--bluelt);
+  border: 1px solid #90C4E0;
+  border-radius: var(--rad);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--blue);
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ===== TABLE ===== */
+.tbl-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radlg);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.05);
+}
+.tbl-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tbl-ttl { font-size: 15px; font-weight: 700; color: var(--text); }
+.exp-btn {
+  padding: 9px 16px;
+  background: var(--dark);
+  color: var(--white);
+  border: none;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  outline: none;
+}
+.tbl-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 400px;
+  overflow-y: auto;
+}
+table { width: 100%; border-collapse: collapse; min-width: 440px; font-size: 14px; }
+thead { position: sticky; top: 0; z-index: 2; }
+thead th {
+  background: var(--cream);
+  padding: 11px 12px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--mid);
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+thead th:first-child { text-align: center; }
+tbody tr { border-bottom: 1px solid rgba(0,0,0,.04); }
+tbody tr:hover { background: rgba(184,151,106,.05); }
+tbody tr.ye { border-bottom: 2px solid var(--border); }
+tbody td { padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums; }
+tbody td:first-child { text-align: center; color: var(--dim); font-size: 12px; }
+tbody td.tc { color: var(--green); font-weight: 600; }
+tbody td.ti { color: var(--red);   font-weight: 600; }
+tbody td.ts { font-weight: 700; }
+
+/* ===== FOOTER ===== */
+footer { text-align: center; padding: 20px; font-size: 12px; color: var(--dim); border-top: 1px solid var(--border); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 540px) {
+  .sys-grid { grid-template-columns: 1fr; }
+  .sys-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 14px; }
+  .sc-ic { font-size: 20px; margin-bottom: 0; flex-shrink: 0; }
+  .rate-row { flex-direction: column; }
+  .rate-box { width: 100%; }
+  .rate-box input { min-height: 54px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 360px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .pills { gap: 6px; }
+  .pill { padding: 11px 15px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-tag">Parcelación Manzanares</div>
+  <h1>Calculadora de <b>Plan de Pago</b></h1>
+  <p>Simule cuotas y financiación para sus clientes</p>
+</div>
+
+<div class="page">
+
+  <!-- SECCIÓN 1 -->
+  <div class="sec-title">🏡 Datos del Lote</div>
+  <div class="card">
+
+    <div class="field">
+      <label class="lbl">¿Cuál es el valor total del lote?</label>
+      <span class="hint">Escriba el precio en pesos colombianos</span>
+      <div class="money-wrap">
+        <span class="money-sign">$</span>
+        <input class="money-input" id="inp-principal" type="tel"
+               inputmode="numeric" autocomplete="off"
+               placeholder="80.000.000">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl">¿Cuánto paga de entrada? (cuota inicial)</label>
+      <span class="hint">El resto se financia en cuotas</span>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="money-wrap" style="flex:1; min-width:0;">
+          <span class="money-sign">$</span>
+          <input class="money-input" id="inp-down" type="tel"
+                 inputmode="numeric" autocomplete="off"
+                 placeholder="20.000.000">
+        </div>
+        <div class="pct-badge" id="pct-lbl">0%</div>
+      </div>
+      <div class="slider-row">
+        <span class="slider-lbl">0%</span>
+        <input type="range" id="sl-down" min="0" max="100" value="0" step="1">
+        <span class="slider-lbl">100%</span>
+      </div>
+    </div>
+
+    <div class="fin-box" id="fin-box">
+      💰 Monto a financiar: <span id="fin-val">—</span>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN 2 -->
+  <div class="sec-title">📋 Condiciones del Crédito</div>
+  <div class="card">
+
+    <div class="field">
+      <label class="lbl">Tasa de interés anual</label>
+      <span class="hint">La tasa que se acuerda con el cliente (por año)</span>
+      <div class="rate-row">
+        <div class="rate-box">
+          <input id="inp-rate" type="number" value="12" min="0.1" max="60" step="0.1">
+          <span class="rate-pct">%</span>
+        </div>
+        <div class="rate-info">
+          <span class="rate-info-lbl">Equivalente mensual</span>
+          <span class="rate-info-val" id="rate-monthly">1.00%</span>
+          <span style="font-size:12px;">por mes</span>
+        </div>
+      </div>
+      <div class="slider-row" style="margin-top:14px;">
+        <span class="slider-lbl">1%</span>
+        <input type="range" id="sl-rate" min="1" max="36" value="12" step="0.5">
+        <span class="slider-lbl">36%</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl">¿A cuántos años se financia?</label>
+      <div class="pills" id="pills-term">
+        <button class="pill on" data-m="12">1 año</button>
+        <button class="pill"    data-m="24">2 años</button>
+        <button class="pill"    data-m="36">3 años</button>
+        <button class="pill"    data-m="48">4 años</button>
+        <button class="pill"    data-m="60">5 años</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl">¿Con qué frecuencia paga el cliente?</label>
+      <div class="sel-wrap">
+        <select id="sel-freq">
+          <option value="12">Mensual — una cuota cada mes</option>
+          <option value="4">Trimestral — cada 3 meses</option>
+          <option value="2">Semestral — cada 6 meses</option>
+          <option value="1">Anual — una vez al año</option>
+        </select>
+        <span class="sel-arrow">▼</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN 3 -->
+  <div class="sec-title">⚙️ Tipo de Amortización</div>
+  <div class="card">
+
+    <div class="field">
+      <label class="lbl">¿Cómo se estructuran los pagos?</label>
+      <span class="hint">Seleccione el esquema que mejor se adapte al cliente</span>
+      <div class="sys-grid" id="sys-grid">
+        <div class="sys-card on" data-s="frances">
+          <div class="sc-ic">📊</div>
+          <div>
+            <div class="sc-t">Cuota Fija</div>
+            <div class="sc-d">Siempre paga lo mismo</div>
+          </div>
+        </div>
+        <div class="sys-card" data-s="aleman">
+          <div class="sc-ic">📉</div>
+          <div>
+            <div class="sc-t">Capital Fijo</div>
+            <div class="sc-d">Cuotas van bajando</div>
+          </div>
+        </div>
+        <div class="sys-card" data-s="americano">
+          <div class="sc-ic">🔚</div>
+          <div>
+            <div class="sc-t">Solo Intereses</div>
+            <div class="sc-d">Capital al final</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:8px;">
+      <label class="lbl">Nombre del cliente <small style="font-weight:400;color:var(--dim);">(opcional)</small></label>
+      <input type="text" id="inp-client" placeholder="Ej: Familia Rodríguez">
+    </div>
+
+    <div class="alert-box" id="alert-box"></div>
+
+    <button class="calc-btn" id="btn-calc">▶ Ver Plan de Pago</button>
+
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="results">
+
+    <div class="sec-title">✅ Resultado del Plan</div>
+
+    <div class="kpi-grid">
+      <div class="kpi k-gold">
+        <div class="kpi-lbl">💳 Cuota periódica</div>
+        <div class="kpi-val" id="kv-cuota">—</div>
+        <div class="kpi-sub" id="ks-cuota"></div>
+      </div>
+      <div class="kpi k-blue">
+        <div class="kpi-lbl">📦 Monto financiado</div>
+        <div class="kpi-val" id="kv-fin">—</div>
+        <div class="kpi-sub" id="ks-fin"></div>
+      </div>
+      <div class="kpi k-green">
+        <div class="kpi-lbl">💵 Total a pagar</div>
+        <div class="kpi-val" id="kv-total">—</div>
+        <div class="kpi-sub" id="ks-total"></div>
+      </div>
+      <div class="kpi k-red">
+        <div class="kpi-lbl">📈 Total intereses</div>
+        <div class="kpi-val" id="kv-int">—</div>
+        <div class="kpi-sub" id="ks-int"></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-ttl">📊 Capital vs Interés por año</div>
+      <div class="bars" id="bars"></div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:var(--green);"></div>Capital abonado</div>
+        <div class="leg"><div class="leg-dot" style="background:var(--red);opacity:.7;"></div>Intereses pagados</div>
+      </div>
+    </div>
+
+    <div class="nota" id="nota-box">
+      <b>ℹ️ Nota:</b> Herramienta de uso interno para estructuración comercial.
+      Los valores son referenciales y no constituyen oferta formal de crédito.
+    </div>
+
+    <div class="tbl-card">
+      <div class="tbl-top">
+        <span class="tbl-ttl">📄 Tabla de Pagos</span>
+        <button class="exp-btn" id="btn-export">⬇ Descargar CSV</button>
+      </div>
+      <div class="tbl-scroll" id="tbl-body"></div>
+    </div>
+
+  </div><!-- /results -->
+
+</div><!-- /page -->
+
+<footer>Parcelación Manzanares &nbsp;·&nbsp; Herramienta Financiera Interna</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── STATE ──────────────────────────────────────────────────────
+  var months  = 12;
+  var system  = 'frances';
+  var table   = [];
+  var pVal    = 0;
+  var dVal    = 0;
+
+  // ── NUMBER FORMAT (no locale dependency) ──────────────────────
+  function thousands(n) {
+    n = Math.round(Math.abs(n));
+    var s = String(n), r = '';
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 === 0) r += '.';
+      r += s[i];
+    }
+    return r;
+  }
+  function money(n)   { return '$ ' + thousands(n); }
+  function short(n) {
+    if (n >= 1000000000) return '$ ' + (n/1000000000).toFixed(2) + ' MM';
+    if (n >= 1000000)    return '$ ' + (n/1000000).toFixed(1) + 'M';
+    return money(n);
+  }
+
+  // ── MONEY MASK ─────────────────────────────────────────────────
+  function maskMoney(id, cb) {
+    var el = document.getElementById(id);
+    function run() {
+      var digits = el.value.replace(/[^0-9]/g, '');
+      var num    = digits ? parseInt(digits, 10) : 0;
+      var fmt    = num > 0 ? thousands(num) : '';
+      if (el.value !== fmt) el.value = fmt;
+      cb(num);
+    }
+    // Listen to every possible event that mobile keyboards fire
+    ['input','keyup','keydown','change','compositionend'].forEach(function(ev) {
+      el.addEventListener(ev, function() { setTimeout(run, 0); });
+    });
+    // Also handle paste
+    el.addEventListener('paste', function() { setTimeout(run, 20); });
+  }
+
+  maskMoney('inp-principal', function(v) {
+    pVal = v;
+    refreshFinanced();
+    refreshDownPct();
+  });
+
+  maskMoney('inp-down', function(v) {
+    dVal = v;
+    refreshFinanced();
+    refreshDownPct();
+  });
+
+  function refreshFinanced() {
+    var fin = pVal > dVal ? pVal - dVal : 0;
+    var el  = document.getElementById('fin-val');
+    el.textContent = fin > 0 ? money(fin) : '—';
+    el.style.fontWeight = fin > 0 ? '800' : '400';
+  }
+
+  function refreshDownPct() {
+    if (!pVal) return;
+    var pct = Math.min(100, Math.round(dVal / pVal * 100));
+    document.getElementById('sl-down').value = pct;
+    document.getElementById('pct-lbl').textContent = pct + '%';
+  }
+
+  // Down slider
+  var slDown = document.getElementById('sl-down');
+  function onSlDown() {
+    var pct = parseInt(slDown.value, 10);
+    document.getElementById('pct-lbl').textContent = pct + '%';
+    if (pVal) {
+      dVal = Math.round(pVal * pct / 100);
+      var el = document.getElementById('inp-down');
+      el.value = dVal > 0 ? thousands(dVal) : '';
+      refreshFinanced();
+    }
+  }
+  slDown.addEventListener('input',  onSlDown);
+  slDown.addEventListener('change', onSlDown);
+
+  // ── RATE ───────────────────────────────────────────────────────
+  var rateEl  = document.getElementById('inp-rate');
+  var slRate  = document.getElementById('sl-rate');
+
+  function refreshRate() {
+    var a = parseFloat(rateEl.value) || 0;
+    var m = (Math.pow(1 + a / 100, 1/12) - 1) * 100;
+    document.getElementById('rate-monthly').textContent = m.toFixed(2) + '%';
+    if (parseFloat(slRate.value) !== a) slRate.value = a;
+  }
+
+  ['input','change','keyup'].forEach(function(e) {
+    rateEl.addEventListener(e, refreshRate);
+  });
+  slRate.addEventListener('input',  function() { rateEl.value = this.value; refreshRate(); });
+  slRate.addEventListener('change', function() { rateEl.value = this.value; refreshRate(); });
+  refreshRate();
+
+  // ── PILL TOGGLE ────────────────────────────────────────────────
+  function pillGroup(containerId, attr, cb) {
+    var cont  = document.getElementById(containerId);
+    var items = cont.querySelectorAll('[' + attr + ']');
+    var fired = false; // prevent double-fire on mobile
+
+    items.forEach(function(el) {
+      function activate(e) {
+        if (e.type === 'click' && fired) { fired = false; return; }
+        if (e.type === 'touchend') { fired = true; e.preventDefault(); }
+        items.forEach(function(x) { x.classList.remove('on'); });
+        el.classList.add('on');
+        cb(el.getAttribute(attr));
+      }
+      el.addEventListener('touchend', activate, { passive: false });
+      el.addEventListener('click',    activate);
+    });
+  }
+
+  pillGroup('pills-term', 'data-m', function(v) {
+    months = parseInt(v, 10);
+  });
+
+  pillGroup('sys-grid', 'data-s', function(v) {
+    system = v;
+  });
+
+  // ── CALCULATE ──────────────────────────────────────────────────
+  function calculate() {
+    hideAlert();
+
+    var P    = pVal;
+    var D    = dVal;
+    var aR   = parseFloat(rateEl.value) / 100;
+    var freq = parseInt(document.getElementById('sel-freq').value, 10);
+    var n    = Math.round(months * freq / 12);
+    var fin  = P - D;
+
+    if (!P || P <= 0)  { showAlert('Por favor ingrese el valor del lote.'); return; }
+    if (fin <= 0)      { showAlert('La cuota inicial no puede ser mayor o igual al valor del lote.'); return; }
+    if (n  <= 0)       { showAlert('El plazo debe ser mayor a cero.'); return; }
+
+    var rp = Math.pow(1 + aR, 1/freq) - 1;
+    table  = buildTable(fin, rp, n, system);
+
+    var tPaid = D, tInt = 0;
+    for (var k = 0; k < table.length; k++) { tPaid += table[k].c; tInt += table[k].i; }
+    var first = table.length ? table[0].c : 0;
+
+    var pLbl = { 12:'mes', 4:'trimestre', 2:'semestre', 1:'año' }[freq] || 'período';
+
+    setText('kv-cuota', short(first));
+    setText('kv-fin',   short(fin));
+    setText('kv-total', short(tPaid));
+    setText('kv-int',   short(tInt));
+    setText('ks-cuota', system === 'aleman' ? 'Primera cuota (bajan luego)' : 'Fija cada ' + pLbl);
+    setText('ks-fin',   'Financiado a ' + (months/12) + ' año(s)');
+    setText('ks-total', 'Capital + todos los intereses');
+    setText('ks-int',   ((tInt/fin)*100).toFixed(1) + '% sobre el capital');
+
+    renderTable(table, freq);
+    renderChart(table, freq);
+
+    var nota = document.getElementById('nota-box');
+    nota.style.display = 'block';
+
+    var res = document.getElementById('results');
+    res.style.display = 'block';
+
+    setTimeout(function() {
+      try { res.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
+    }, 100);
+  }
+
+  function buildTable(P, r, n, sys) {
+    var rows = [], bal = P;
+    if (sys === 'frances') {
+      var c = r === 0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n) - 1);
+      for (var i = 1; i <= n; i++) {
+        var ii = bal * r, ci = c - ii;
+        bal -= ci;
+        rows.push({ p:i, c:c, k:ci, i:ii, s: bal < 0 ? 0 : bal });
+      }
+    } else if (sys === 'aleman') {
+      var kf = P / n;
+      for (var i = 1; i <= n; i++) {
+        var ii = bal * r;
+        bal -= kf;
+        rows.push({ p:i, c:kf+ii, k:kf, i:ii, s: bal < 0 ? 0 : bal });
+      }
+    } else {
+      for (var i = 1; i <= n; i++) {
+        var ii = bal * r, ki = i === n ? bal : 0;
+        bal -= ki;
+        rows.push({ p:i, c:ii+ki, k:ki, i:ii, s: bal < 0 ? 0 : bal });
+      }
+    }
+    return rows;
+  }
+
+  function renderTable(rows, freq) {
+    var pLbl = { 12:'Mes', 4:'Trim.', 2:'Sem.', 1:'Año' }[freq] || 'Per.';
+    var h = '<table><thead><tr>' +
+      '<th>' + pLbl + '</th><th>Cuota</th><th>Capital</th><th>Interés</th><th>Saldo</th>' +
+      '</tr></thead><tbody>';
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var ye = freq > 1 && (i+1) % freq === 0;
+      h += '<tr class="' + (ye ? 'ye' : '') + '">' +
+        '<td>' + r.p + '</td>' +
+        '<td>' + money(r.c) + '</td>' +
+        '<td class="tc">' + money(r.k) + '</td>' +
+        '<td class="ti">' + money(r.i) + '</td>' +
+        '<td class="ts">' + money(r.s) + '</td>' +
+        '</tr>';
+    }
+    h += '</tbody></table>';
+    document.getElementById('tbl-body').innerHTML = h;
+  }
+
+  function renderChart(rows, freq) {
+    var groups = [], i;
+    for (i = 0; i < rows.length; i += freq) {
+      var sl = rows.slice(i, i + freq), ck = 0, ci = 0;
+      for (var j = 0; j < sl.length; j++) { ck += sl[j].k; ci += sl[j].i; }
+      groups.push({ lbl: 'Año ' + (Math.floor(i/freq)+1), k: ck, i: ci });
+    }
+    var disp = groups.slice(0, 15), max = 1;
+    for (i = 0; i < disp.length; i++) { var t = disp[i].k + disp[i].i; if (t > max) max = t; }
+
+    var cont = document.getElementById('bars');
+    cont.innerHTML = '';
+    for (i = 0; i < disp.length; i++) {
+      var g = disp[i];
+      var ch = Math.max(2, Math.round(g.k/max*100));
+      var ih = Math.max(2, Math.round(g.i/max*100));
+      var d = document.createElement('div');
+      d.className = 'bar-g';
+      d.innerHTML =
+        '<div class="bar-c" style="height:' + ch + 'px"></div>' +
+        '<div class="bar-i" style="height:' + ih + 'px"></div>' +
+        '<div class="bar-l">' + g.lbl + '</div>';
+      cont.appendChild(d);
+    }
+  }
+
+  // ── EXPORT CSV ─────────────────────────────────────────────────
+  function exportCSV() {
+    if (!table.length) { showAlert('Primero calcule un plan de pago.'); return; }
+    var freq = parseInt(document.getElementById('sel-freq').value, 10);
+    var pLbl = { 12:'Mes', 4:'Trimestre', 2:'Semestre', 1:'Año' }[freq] || 'Periodo';
+    var cli  = document.getElementById('inp-client').value || 'Cliente';
+    var sys  = { frances:'Cuota Fija', aleman:'Capital Fijo', americano:'Solo Intereses' }[system];
+
+    var csv = 'Parcelacion Manzanares - Plan de Pago\n';
+    csv += 'Cliente:,' + cli + '\nSistema:,' + sys + '\n';
+    csv += 'Valor Lote:,' + pVal + '\nCuota Inicial:,' + dVal + '\nMonto Financiado:,' + (pVal-dVal) + '\n\n';
+    csv += pLbl + ',Cuota,Capital,Interes,Saldo\n';
+    for (var i = 0; i < table.length; i++) {
+      var r = table[i];
+      csv += r.p + ',' + Math.round(r.c) + ',' + Math.round(r.k) + ',' + Math.round(r.i) + ',' + Math.round(r.s) + '\n';
+    }
+    try {
+      var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href   = url; a.download = 'plan-pago-manzanares.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1500);
+    } catch(e) { showAlert('No se pudo descargar en este dispositivo.'); }
+  }
+
+  // ── HELPERS ────────────────────────────────────────────────────
+  function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+  function showAlert(msg) {
+    var el = document.getElementById('alert-box');
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+    setTimeout(function() { el.style.display = 'none'; }, 5000);
+  }
+  function hideAlert() { document.getElementById('alert-box').style.display = 'none'; }
+
+  // ── WIRE BUTTONS ───────────────────────────────────────────────
+  // Using a fired-guard so touchend+click don't double-fire
+  function wireButton(id, fn) {
+    var el     = document.getElementById(id);
+    var fired  = false;
+    el.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      fired = true;
+      fn();
+    }, { passive: false });
+    el.addEventListener('click', function() {
+      if (fired) { fired = false; return; }
+      fn();
+    });
+  }
+
+  wireButton('btn-calc',   calculate);
+  wireButton('btn-export', exportCSV);
+
+})();
+</script>
+</body>
+</html>
