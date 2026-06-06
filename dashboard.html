@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Manzanares - Dashboard Operativo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+:root {
+  --blue: #1F3864;
+  --blue2: #2E75B6;
+  --gold: #C9A227;
+  --cream: #FAF5E8;
+  --green: #2D7A4F;
+  --greenlt: #DFF0E2;
+  --red: #C0392B;
+  --redlt: #FCE9E7;
+  --gray: #6B6B6B;
+  --bg: #F4F5F7;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+body { background: var(--bg); color: #1A1A1A; line-height: 1.4; min-height:100vh; }
+
+/* HEADER */
+.hdr { background: var(--blue); color: #fff; padding: 14px 24px; box-shadow: var(--shadow); }
+.hdr-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.hdr h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.2px; }
+.hdr-sub { font-size: 12px; opacity: 0.85; }
+.hdr-actions { display: flex; gap: 8px; }
+.btn-hdr { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; }
+.btn-hdr:hover { background: rgba(255,255,255,0.25); }
+
+/* KPI ROW */
+.kpis { max-width: 1400px; margin: 16px auto; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; box-shadow: var(--shadow); }
+.kpi-lbl { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.kpi-val { font-size: 22px; font-weight: 800; color: var(--blue); margin-top: 4px; }
+.kpi-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.kpi.good .kpi-val { color: var(--green); }
+.kpi.bad .kpi-val { color: var(--red); }
+.kpi.warn .kpi-val { color: var(--gold); }
+
+/* TABS */
+.tabs { max-width: 1400px; margin: 0 auto 16px; padding: 0 24px; border-bottom: 1px solid var(--border); display: flex; gap: 4px; overflow-x: auto; }
+.tab { padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--gray); border-bottom: 3px solid transparent; white-space: nowrap; }
+.tab.on { color: var(--blue); border-bottom-color: var(--blue); }
+.tab:hover { color: var(--blue); }
+
+/* PANEL */
+.panel { max-width: 1400px; margin: 0 auto; padding: 0 24px 40px; }
+.panel.hide { display: none; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 16px; }
+.card-title { font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .row2, .row3 { grid-template-columns: 1fr; } }
+
+/* PROGRESS */
+.progress-block { margin-bottom: 14px; }
+.progress-lbl { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.progress-lbl b { color: var(--blue); font-weight: 700; }
+.progress-bar { background: #F0F0F0; height: 14px; border-radius: 7px; overflow: hidden; position: relative; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue) 0%, var(--blue2) 100%); transition: width 0.4s ease; }
+.progress-fill.good { background: linear-gradient(90deg, var(--green) 0%, #4FA876 100%); }
+.progress-fill.warn { background: linear-gradient(90deg, var(--gold) 0%, #E0B847 100%); }
+.progress-fill.bad { background: linear-gradient(90deg, var(--red) 0%, #E27B6E 100%); }
+.progress-target { position: absolute; top: 0; height: 100%; width: 2px; background: var(--blue); opacity: 0.6; }
+.progress-target::after { content: ''; position: absolute; top: -3px; left: -3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+/* BUTTONS */
+.btn { background: var(--blue); color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { background: var(--blue2); }
+.btn-sec { background: #fff; color: var(--blue); border: 1px solid var(--border); }
+.btn-sec:hover { background: var(--bg); }
+.btn-sm { padding: 6px 10px; font-size: 11px; }
+.btn-dl { background: var(--red); }
+.btn-dl:hover { background: #B02B1F; }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.3px; }
+.field input, .field select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; outline: none; transition: border-color 0.15s; }
+.field input:focus, .field select:focus { border-color: var(--blue); }
+.field input[readonly] { background: #F8F9FA; color: var(--gray); }
+.field-full { grid-column: 1 / -1; }
+.hint { font-size: 10px; color: var(--gray); margin-top: 2px; }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { background: var(--bg); color: var(--blue); font-weight: 700; padding: 8px 10px; text-align: left; border-bottom: 2px solid var(--border); text-transform: uppercase; font-size: 11px; letter-spacing: 0.3px; white-space: nowrap; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+tr:hover td { background: #FAFBFC; }
+.t-num { text-align: right; font-variant-numeric: tabular-nums; }
+.t-ctr { text-align: center; }
+.pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.pill-cont { background: var(--greenlt); color: var(--green); }
+.pill-cred { background: #E8EEF7; color: var(--blue); }
+.pill-act { background: var(--greenlt); color: var(--green); }
+.pill-ate { background: #FFF4D8; color: #8A6700; }
+.pill-can { background: var(--redlt); color: var(--red); }
+
+/* MODAL */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+.modal.on { display: flex; }
+.modal-inner { background: #fff; border-radius: 10px; width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; padding: 24px; }
+.modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.modal-ttl { font-size: 18px; font-weight: 700; color: var(--blue); }
+.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* CHART CONTAINER */
+.chart-c { height: 280px; position: relative; }
+.chart-c.tall { height: 360px; }
+
+/* ETAPA CARD */
+.etapa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.etapa-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.etapa-card.good { border-left: 4px solid var(--green); }
+.etapa-card.warn { border-left: 4px solid var(--gold); }
+.etapa-card.bad { border-left: 4px solid var(--red); }
+.etapa-num { font-size: 11px; color: var(--gray); font-weight: 700; }
+.etapa-name { font-size: 13px; font-weight: 700; color: var(--blue); margin: 4px 0; }
+.etapa-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 11px; }
+.etapa-stat-lbl { color: var(--gray); }
+.etapa-stat-val { font-weight: 700; color: var(--blue); }
+
+/* GAUGE CARDS */
+.gauge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.gauge-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px; border-top: 4px solid var(--gray); }
+.gauge-card.good { border-top-color: var(--green); }
+.gauge-card.warn { border-top-color: var(--gold); }
+.gauge-card.bad { border-top-color: var(--red); }
+.gc-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.gc-num { font-size: 11px; font-weight: 700; color: var(--gray); letter-spacing: 0.5px; }
+.gc-stat { padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.gc-stat.good { background: var(--greenlt); color: var(--green); }
+.gc-stat.warn { background: #FFF4D8; color: #8A6700; }
+.gc-stat.bad { background: var(--redlt); color: var(--red); }
+.gc-name { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+.gc-gauge { position: relative; height: 100px; margin: 0 auto 8px; }
+.gc-gauge canvas { max-width: 200px; margin: 0 auto; display: block; }
+.gc-gauge-pct { position: absolute; bottom: 6px; left: 0; right: 0; text-align: center; font-size: 22px; font-weight: 800; color: var(--blue); }
+.gc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; margin-bottom: 8px; }
+.gc-stat-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted var(--border); }
+.gc-stat-row .lbl { color: var(--gray); }
+.gc-stat-row .val { font-weight: 700; color: var(--blue); }
+.gc-stat-row .val.good { color: var(--green); }
+.gc-stat-row .val.bad { color: var(--red); }
+.gc-decision { padding: 8px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-align: center; }
+.gc-decision.good { background: var(--greenlt); color: var(--green); }
+.gc-decision.warn { background: #FFF4D8; color: #8A6700; }
+.gc-decision.bad { background: var(--redlt); color: var(--red); }
+
+/* BE MIX BLOCK */
+.be-mix-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.be-mix-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.be-mix-name { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; }
+.be-mix-units { font-size: 32px; font-weight: 800; color: var(--blue); margin: 4px 0; }
+.be-mix-detail { font-size: 11px; color: var(--gray); line-height: 1.4; }
+.be-mix-formula { font-family: monospace; font-size: 10px; color: var(--gray); background: #fff; padding: 4px 6px; border-radius: 4px; margin-top: 6px; }
+
+/* CONFIG */
+.cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+
+/* HELPERS */
+.txt-c { text-align: center; }
+.muted { color: var(--gray); }
+.sm { font-size: 11px; }
+.big { font-size: 22px; font-weight: 800; }
+.empty { text-align: center; padding: 40px 20px; color: var(--gray); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <h1>MANZANARES &middot; Dashboard Operativo</h1>
+      <div class="hdr-sub">Inversiones JGRM SAS &middot; Seguimiento comercial y break-even</div>
+    </div>
+    <div class="hdr-actions">
+      <button class="btn-hdr" onclick="document.getElementById('imp-xlsx').click()" style="background:rgba(45,122,79,0.85)">Importar Excel</button>
+      <input type="file" id="imp-xlsx" style="display:none" accept=".xlsx,.xls" onchange="importExcel(event)">
+      <button class="btn-hdr" onclick="exportData()">Exportar Ventas</button>
+      <button class="btn-hdr" onclick="document.getElementById('imp-file').click()">Importar Ventas</button>
+      <input type="file" id="imp-file" style="display:none" accept=".json" onchange="importData(event)">
+      <button class="btn-hdr" onclick="resetData()" style="background:rgba(192,57,43,0.7)">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="tabs" id="tabs">
+  <div class="tab on" data-p="resumen">Resumen</div>
+  <div class="tab" data-p="ventas">Registro de Ventas</div>
+  <div class="tab" data-p="flujo">Flujo de Caja</div>
+  <div class="tab" data-p="etapas">Etapas</div>
+  <div class="tab" data-p="actividades">Actividades & Prioridades</div>
+  <div class="tab" data-p="config">Configuracion</div>
+</div>
+
+<!-- PANEL: RESUMEN -->
+<div class="panel" id="p-resumen">
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Progreso hacia Break-Even</div>
+      <div class="progress-block">
+        <div class="progress-lbl"><span>Lotes vendidos vs Break-Even contable</span><b><span id="be-actual">0</span> / <span id="be-target">46</span></b></div>
+        <div class="progress-bar"><div class="progress-fill" id="be-fill" style="width:0%"></div></div>
+        <div class="hint" id="be-hint">38 lotes para break-even contable, 46 para autofinanciacion completa</div>
+      </div>
+      <div class="progress-block">
+        <div class="progress-lbl"><span>Lotes vendidos vs Inventario total</span><b><span id="inv-actual">0</span> / <span id="inv-total">128</span></b></div>
+        <div class="progress-bar"><div class="progress-fill" id="inv-fill" style="width:0%"></div></div>
+      </div>
+      <div class="progress-block">
+        <div class="progress-lbl"><span>Caja recaudada vs Caja necesaria total</span><b id="caja-pct">0%</b></div>
+        <div class="progress-bar"><div class="progress-fill" id="caja-fill" style="width:0%"></div></div>
+        <div class="hint" id="caja-hint">Objetivo: $9.81B</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status Auto-financiacion</div>
+      <div id="autofin-status" class="txt-c" style="padding:20px 0">
+        <div class="big" style="color:var(--blue)" id="autofin-msg">Sin ventas registradas</div>
+        <div class="muted sm" style="margin-top:8px" id="autofin-detail">Registre ventas para evaluar break-even</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <div><div class="kpi-lbl">Cuota Inicial Promedio</div><div style="font-size:16px;font-weight:700;color:var(--blue)" id="ci-avg">-</div></div>
+        <div><div class="kpi-lbl">Ritmo (lotes/mes)</div><div style="font-size:16px;font-weight:700;color:var(--blue)" id="ritmo-actual">-</div></div>
+        <div><div class="kpi-lbl">Impuestos sobre ventas</div><div style="font-size:16px;font-weight:700;color:var(--red)" id="imp-pct">-</div></div>
+        <div><div class="kpi-lbl">Impuestos retenidos</div><div style="font-size:14px;font-weight:700;color:var(--red)" id="imp-total">-</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Viabilidad Comercial por Etapa <span class="muted sm" style="font-weight:normal">(actualiza con cada venta)</span></div>
+    <div id="etapa-gauges-grid"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Break-Even con Estructura Comercial (Contado + Credito)</div>
+    <div id="be-mix-block"></div>
+  </div>
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Ventas por Categoria</div>
+      <div class="chart-c"><canvas id="chart-cat"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Lotes Vendidos por Mes</div>
+      <div class="chart-c"><canvas id="chart-monthly"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL: VENTAS -->
+<div class="panel hide" id="p-ventas">
+  <div class="card">
+    <div class="card-title">
+      <span>Registro de Ventas</span>
+      <button class="btn" onclick="openSaleModal()">+ Nueva Venta</button>
+    </div>
+    <div class="tbl-wrap">
+      <table id="t-ventas">
+        <thead>
+          <tr>
+            <th>Lote</th>
+            <th>Etapa</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th class="t-num">Valor</th>
+            <th>Tipo</th>
+            <th class="t-num">Cuota Inicial</th>
+            <th class="t-num">Cuota/mes</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ventas-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL: FLUJO -->
+<div class="panel hide" id="p-flujo">
+  <div class="card">
+    <div class="card-title">Flujo de Caja Mensual: Ingresos vs Egresos</div>
+    <div class="chart-c tall"><canvas id="chart-flow"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Detalle Mensual</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th class="t-num">Lotes vendidos (mes)</th>
+            <th class="t-num">Lotes acumulados</th>
+            <th class="t-num">Cuota inicial</th>
+            <th class="t-num">Cuotas mensuales</th>
+            <th class="t-num">Total Ingresos</th>
+            <th class="t-num">Egresos Obra</th>
+            <th class="t-num">Saldo Mes</th>
+            <th class="t-num">Saldo Acumulado</th>
+          </tr>
+        </thead>
+        <tbody id="flujo-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL: ETAPAS -->
+<div class="panel hide" id="p-etapas">
+  <div class="card">
+    <div class="card-title">Progreso por Etapa de Obra</div>
+    <div class="etapa-grid" id="etapas-grid"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Lotes Necesarios vs Vendidos (acumulado por etapa)</div>
+    <div class="chart-c tall"><canvas id="chart-etapas"></canvas></div>
+  </div>
+</div>
+
+<!-- PANEL: ACTIVIDADES -->
+<div class="panel hide" id="p-actividades">
+  <div class="card">
+    <div class="card-title">
+      <span>Actividades y Prioridades (numero actividad)</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="saveChangesToExcel()" style="background:var(--green)">Guardar cambios al Excel</button>
+        <button class="btn btn-sec" onclick="resetPriorities()">Restaurar prioridades originales</button>
+      </div>
+    </div>
+    <div class="hint" style="margin-bottom:12px">
+      Cambie la prioridad de cada actividad para reasignarla a otra etapa. Mapeo: 1-3 -> Etapa 1, 4 -> Etapa 2, 5 -> Etapa 3, 6 -> Etapa 4, 7 -> Etapa 5, 8-9 -> Etapa 6, 10-11 -> Etapa 7, 12 -> Etapa 8. 0 -> Preliminares (fuera de etapas), OPEX -> gastos operativos, FINAL -> no-cash (lotes entregados/cedidas).
+      <br><b>Cambios se aplican al instante</b> y recalculan los V.TOTAL por etapa, egresos mensuales y break-even.
+    </div>
+    <div id="activities-summary" style="margin-bottom:12px"></div>
+    <div class="tbl-wrap">
+      <table id="t-actividades">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Actividad</th>
+            <th>Capitulo</th>
+            <th class="t-num">V. TOTAL</th>
+            <th>Prioridad</th>
+            <th>Etapa</th>
+            <th>Cambio</th>
+          </tr>
+        </thead>
+        <tbody id="actividades-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL: CONFIG -->
+<div class="panel hide" id="p-config">
+  <div class="card">
+    <div class="card-title">Parametros del Modelo Financiero</div>
+    <div class="hint" style="margin-bottom:12px">Valores sincronizados con 01_Modelo_Financiero_Manzanares.xlsx. Edite si los cambia en el modelo.</div>
+    <div class="cfg-grid">
+      <div class="field">
+        <label>Inventario total (lotes)</label>
+        <input type="number" id="cfg-inv" value="128">
+      </div>
+      <div class="field">
+        <label>Valor catalogo total (COP)</label>
+        <input type="number" id="cfg-valor" value="45850541762">
+      </div>
+      <div class="field">
+        <label>Precio promedio lote (COP)</label>
+        <input type="number" id="cfg-precio" value="358207357">
+      </div>
+      <div class="field">
+        <label>Costo total obra (COP)</label>
+        <input type="number" id="cfg-obra" value="8448244424">
+      </div>
+      <div class="field">
+        <label>Caja necesaria total (COP)</label>
+        <input type="number" id="cfg-caja" value="9814425866">
+      </div>
+      <div class="field">
+        <label>Break-even contable (lotes)</label>
+        <input type="number" id="cfg-be" value="38">
+      </div>
+      <div class="field">
+        <label>Preventa minima (lotes)</label>
+        <input type="number" id="cfg-pv" value="25">
+      </div>
+      <div class="field">
+        <label>Ritmo objetivo (lotes/mes)</label>
+        <input type="number" id="cfg-ritmo" value="6">
+      </div>
+      <div class="field">
+        <label>Cuota Inicial Credito por defecto (%)</label>
+        <input type="number" id="cfg-ci" value="30" step="0.5">
+      </div>
+      <div class="field">
+        <label>Plazo credito por defecto (meses)</label>
+        <input type="number" id="cfg-plazo" value="60">
+      </div>
+      <div class="field">
+        <label>Tasa de interes EA (%)</label>
+        <input type="number" id="cfg-tasa" value="14" step="0.1">
+      </div>
+      <div class="field">
+        <label>Mix Contado por defecto (%)</label>
+        <input type="number" id="cfg-mix" value="30" step="1">
+      </div>
+      <div class="field">
+        <label>Impuestos sobre ventas (%)</label>
+        <input type="number" id="cfg-imp" value="30" step="0.5">
+        <span class="hint">Tasa efectiva aplicada sobre cada cobranza (reduce ingresos netos)</span>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn" onclick="saveCfg()">Guardar Configuracion</button>
+      <button class="btn-sec btn" onclick="resetCfg()">Restaurar Defaults</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Etapas de Obra (cronograma)</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Etapa</th>
+            <th>Descripcion</th>
+            <th class="t-num">Mes Inicio</th>
+            <th class="t-num">Mes Fin</th>
+            <th class="t-num">Costo Directo</th>
+            <th class="t-num">Costo con Overhead</th>
+          </tr>
+        </thead>
+        <tbody id="etapas-cfg-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVA VENTA -->
+<div class="modal" id="modal-sale">
+  <div class="modal-inner">
+    <div class="modal-hdr">
+      <div class="modal-ttl" id="modal-ttl">Nueva Venta</div>
+      <button class="modal-close" onclick="closeSaleModal()">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Numero de Lote *</label>
+        <select id="f-lote" onchange="onLoteSelected()">
+          <option value="">- Importe Excel para ver catalogo -</option>
+        </select>
+        <span class="hint">Auto-llena categoria, m2 y valor al seleccionar</span>
+      </div>
+      <div class="field">
+        <label>Etapa</label>
+        <select id="f-etapa">
+          <option value="">- Seleccionar -</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Cliente / Identificador *</label>
+        <input type="text" id="f-cliente" placeholder="Juan Perez">
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="f-cat">
+          <option value="Plus">Plus</option>
+          <option value="light">Light</option>
+          <option value="sub urbanos">Sub Urbanos</option>
+          <option value="via">Via</option>
+          <option value="interio">Interior</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fecha de Venta *</label>
+        <input type="date" id="f-fecha">
+      </div>
+      <div class="field">
+        <label>Valor del Lote (COP) *</label>
+        <input type="number" id="f-valor" placeholder="358000000">
+      </div>
+      <div class="field">
+        <label>Tipo de Venta *</label>
+        <select id="f-tipo" onchange="toggleFin()">
+          <option value="contado">Contado</option>
+          <option value="credito" selected>Credito</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado *</label>
+        <select id="f-status">
+          <option value="activa">Activa</option>
+          <option value="atrasada">Atrasada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="field-full" id="fin-block">
+        <hr style="margin:8px 0;border:none;border-top:1px solid var(--border)">
+        <div style="font-weight:700;color:var(--blue);font-size:13px;margin-bottom:8px">Detalles de Financiacion</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Cuota Inicial (%)</label>
+            <input type="number" id="f-cipct" value="30" step="0.5" oninput="recalcFin()">
+          </div>
+          <div class="field">
+            <label>Cuota Inicial (COP)</label>
+            <input type="number" id="f-ci" readonly>
+          </div>
+          <div class="field">
+            <label>Saldo a Financiar</label>
+            <input type="number" id="f-saldo" readonly>
+          </div>
+          <div class="field">
+            <label>Plazo (meses)</label>
+            <select id="f-plazo" onchange="recalcFin()">
+              <option value="12">12 (1 ano)</option>
+              <option value="24">24 (2 anos)</option>
+              <option value="36">36 (3 anos)</option>
+              <option value="48">48 (4 anos)</option>
+              <option value="60" selected>60 (5 anos)</option>
+              <option value="84">84 (7 anos)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tasa EA (%)</label>
+            <input type="number" id="f-tasa" value="14" step="0.1" oninput="recalcFin()">
+          </div>
+          <div class="field">
+            <label>Sistema</label>
+            <select id="f-sist" onchange="recalcFin()">
+              <option value="frances" selected>Frances (cuota fija)</option>
+              <option value="aleman">Aleman (capital fijo)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Cuota Mensual (COP)</label>
+            <input type="number" id="f-pmt" readonly>
+          </div>
+          <div class="field">
+            <label>Fecha primer pago</label>
+            <input type="date" id="f-fpago">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec btn" onclick="closeSaleModal()">Cancelar</button>
+      <button class="btn" onclick="saveSale()">Guardar Venta</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// MODEL CONSTANTS (synced with 01_Modelo_Financiero_Manzanares.xlsx)
+// =====================================================
+// Etapa names corrected from Sheet2 priority mapping (mutable - can be replaced via Excel import)
+let ETAPAS = [
+  { n:1, name:'Preliminares (Vias Nuevas descapote + Roceria)',                inicio:1, fin:7, directo:106031289,   overhead:1.32 },
+  { n:2, name:'Preliminares + Bocatomas + PTAP + Tanques + AR + Alcantarillado', inicio:2, fin:6, directo:924820175, overhead:1.32 },
+  { n:3, name:'Mejoramiento Vias Existentes',                                  inicio:7, fin:7, directo:254220853,   overhead:1.32 },
+  { n:4, name:'Movimiento de Tierra Oficina',                                  inicio:2, fin:2, directo:1178458602,  overhead:1.32 },
+  { n:5, name:'Vias Nuevas Suministro + Culvert',                              inicio:7, fin:7, directo:1051038626,  overhead:1.32 },
+  { n:6, name:'Caseta Porteria (chup basura + descapote + casaprefab)',        inicio:8, fin:8, directo:159863967,   overhead:1.32 },
+  { n:7, name:'Caseta CCTV + Porteria mecanizada',                             inicio:8, fin:8, directo:118000000,   overhead:1.32 },
+  { n:8, name:'Mejora Zonas (porton + parque + cancha + gimnasio)',            inicio:8, fin:8, directo:131000000,   overhead:1.32 }
+];
+
+// Monthly egress curve (M1-M14) in COP - mutable, replaced via Excel import
+// Default total egress = $5.96B (cash, excludes FINAL non-cash). Source: Etapas!R51 in modelo
+let EGRESOS_MES = [
+  340_000_000,    // M1
+  1_995_000_000,  // M2 - Etapa 4 (Mov Tierra) peak + Etapa 2 PTAP/Bocatomas
+  240_000_000,    // M3 - Etapa 2 continua
+  180_000_000,    // M4
+  430_000_000,    // M5
+  955_000_000,    // M6 - Etapa 2 pico final
+  1_180_000_000,  // M7 - Etapas 1 cierre + 3 + 5 peak
+  580_000_000,    // M8 - Etapas 6, 7, 8
+  20_000_000,     // M9
+  20_000_000,     // M10
+  20_000_000,     // M11
+  20_000_000,     // M12
+  10_000_000,     // M13
+  5_000_000       // M14
+];
+
+// Default config (synced with Supuestos sheet)
+const DEFAULT_CFG = {
+  inv_total: 128,
+  valor_catalogo: 45_643_476_229,
+  precio_avg: 356_589_658,
+  costo_obra: 8_448_244_424,
+  caja_total: 5_964_908_866,   // Cash necesaria (excluye FINAL non-cash $2.48B)
+  costo_total_proyecto: 9_293_068_866, // Incluye FINAL (informativo)
+  break_even: 38,
+  break_even_autofin: 46,
+  preventa_min: 25,
+  ritmo_target: 6,
+  ci_default: 30,
+  plazo_default: 60,
+  tasa_default: 14,
+  mix_contado: 30,
+  impuestos_pct: 30
+};
+
+// =====================================================
+// PRIORITY -> ETAPA MAPPING (from presupuesto Sheet1)
+// =====================================================
+const PRIORITY_TO_ETAPA = {
+  1: 1, 2: 1, 3: 1,
+  4: 2,
+  5: 3,
+  6: 4,
+  7: 5,
+  8: 6, 9: 6,
+  10: 7, 11: 7,
+  12: 8
+};
+const ETAPA_TO_PRIORITIES = {
+  1: [1,2,3], 2: [4], 3: [5], 4: [6], 5: [7],
+  6: [8,9], 7: [10,11], 8: [12]
+};
+
+// Default monthly weights per etapa (normalized, sums to 1.0)
+// Source: Etapas Section C rows 34-41 / total per etapa
+let ETAPA_MONTHLY_WEIGHTS = [
+  [0.42, 0, 0, 0, 0, 0, 0.58, 0, 0, 0, 0, 0, 0, 0],     // E1
+  [0, 0.32, 0.13, 0.05, 0.27, 0.23, 0, 0, 0, 0, 0, 0, 0, 0],  // E2
+  [0, 0, 0, 0, 0, 0, 1.00, 0, 0, 0, 0, 0, 0, 0],     // E3
+  [0, 1.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],     // E4
+  [0, 0, 0, 0, 0, 0, 1.00, 0, 0, 0, 0, 0, 0, 0],     // E5
+  [0, 0, 0, 0, 0, 0, 0, 1.00, 0, 0, 0, 0, 0, 0],     // E6
+  [0, 0, 0, 0, 0, 0, 0, 1.00, 0, 0, 0, 0, 0, 0],     // E7
+  [0, 0, 0, 0, 0, 0, 0, 1.00, 0, 0, 0, 0, 0, 0]      // E8
+];
+
+// =====================================================
+// STATE
+// =====================================================
+let state = {
+  sales: [],
+  cfg: { ...DEFAULT_CFG },
+  activities: [],         // [{id, desc, capitulo, vTotal, originalPriority, currentPriority}]
+  priority_overrides: {}, // {activityId: newPriority}
+  catalog: []             // [{lote, cat, m2, valor, disponible}]
+};
+let _loadedWorkbook = null;        // The XLSX workbook kept in memory after import
+let _loadedFileName = '01_Modelo_Financiero_Manzanares.xlsx';
+
+function load() {
+  const s = localStorage.getItem('manzanares_state');
+  if (s) {
+    try {
+      const parsed = JSON.parse(s);
+      state.sales = parsed.sales || [];
+      state.cfg = { ...DEFAULT_CFG, ...(parsed.cfg || {}) };
+      state.activities = parsed.activities || [];
+      state.priority_overrides = parsed.priority_overrides || {};
+      state.catalog = parsed.catalog || [];
+      if (Array.isArray(parsed.etapas) && parsed.etapas.length === 8) ETAPAS = parsed.etapas;
+      if (Array.isArray(parsed.egresos_mes) && parsed.egresos_mes.length === 14) EGRESOS_MES = parsed.egresos_mes;
+      if (Array.isArray(parsed.etapa_weights) && parsed.etapa_weights.length === 8) ETAPA_MONTHLY_WEIGHTS = parsed.etapa_weights;
+    } catch(e) { console.error(e); }
+  }
+}
+
+function save() {
+  localStorage.setItem('manzanares_state', JSON.stringify({
+    sales: state.sales,
+    cfg: state.cfg,
+    activities: state.activities,
+    priority_overrides: state.priority_overrides,
+    catalog: state.catalog,
+    etapas: ETAPAS,
+    egresos_mes: EGRESOS_MES,
+    etapa_weights: ETAPA_MONTHLY_WEIGHTS
+  }));
+}
+
+// =====================================================
+// UTILS
+// =====================================================
+const fmt = (n) => {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  if (Math.abs(n) >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+  if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+};
+const fmtFull = (n) => {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  return '$' + Math.round(n).toLocaleString();
+};
+const fmtPct = (n) => (n*100).toFixed(1) + '%';
+const monthsBetween = (d1, d2) => {
+  if (!d1 || !d2) return 0;
+  const a = new Date(d1), b = new Date(d2);
+  return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+};
+
+function pmt(rate, n, pv) {
+  if (rate === 0) return pv / n;
+  return pv * rate / (1 - Math.pow(1 + rate, -n));
+}
+
+// Get sale month index (1-based) relative to project start
+// Project start = first sale date (or today if no sales)
+function getProjectStartDate() {
+  if (state.sales.length === 0) return new Date();
+  const dates = state.sales.map(s => new Date(s.fecha)).sort((a,b) => a-b);
+  return dates[0];
+}
+
+// =====================================================
+// COMPUTATIONS
+// =====================================================
+function computeSaleSchedule(sale) {
+  // Returns array of {month_idx, amount} from project start. Amounts are NET of taxes.
+  const start = getProjectStartDate();
+  const saleMonthIdx = monthsBetween(start, new Date(sale.fecha)) + 1; // 1-based
+  const events = [];
+  const coefNeto = 1 - (state.cfg.impuestos_pct / 100);
+
+  if (sale.tipo === 'contado') {
+    events.push({ m: saleMonthIdx, amount: sale.valor * coefNeto, kind: 'contado' });
+  } else {
+    // CI at sale date
+    const ci = sale.valor * (sale.cipct / 100);
+    events.push({ m: saleMonthIdx, amount: ci * coefNeto, kind: 'ci' });
+
+    // Monthly payments starting from f-fpago (or saleMonth+1)
+    const firstPayDate = sale.fpago ? new Date(sale.fpago) : null;
+    const firstPayMonth = firstPayDate ? monthsBetween(start, firstPayDate) + 1 : saleMonthIdx + 1;
+    const principal = sale.valor - ci;
+    const r = Math.pow(1 + sale.tasa/100, 1/12) - 1;
+    const plazo = sale.plazo;
+
+    if (sale.sist === 'aleman') {
+      // Capital fijo, intereses sobre saldo
+      const cap = principal / plazo;
+      let saldo = principal;
+      for (let i = 0; i < plazo; i++) {
+        const int = saldo * r;
+        events.push({ m: firstPayMonth + i, amount: (cap + int) * coefNeto, kind: 'cuota' });
+        saldo -= cap;
+      }
+    } else {
+      // Frances - cuota fija
+      const pmtVal = pmt(r, plazo, principal);
+      for (let i = 0; i < plazo; i++) {
+        events.push({ m: firstPayMonth + i, amount: pmtVal * coefNeto, kind: 'cuota' });
+      }
+    }
+  }
+  return events;
+}
+
+function computeMonthlyFlow(maxMonths = 65) {
+  // Returns: [{m, ventas_mes, ventas_acum, ingreso_ci, ingreso_cuotas, ingreso_contado, ingreso_total, egreso, saldo_mes, saldo_acum}]
+  const monthly = Array.from({length: maxMonths}, (_, i) => ({
+    m: i + 1,
+    ventas_mes: 0,
+    ventas_acum: 0,
+    ingreso_ci: 0,
+    ingreso_cuotas: 0,
+    ingreso_contado: 0,
+    egreso: i < 14 ? EGRESOS_MES[i] : 0,
+    saldo_mes: 0,
+    saldo_acum: 0
+  }));
+
+  // Active sales only
+  const activeSales = state.sales.filter(s => s.status !== 'cancelada');
+
+  // Count ventas per month
+  const start = getProjectStartDate();
+  activeSales.forEach(s => {
+    const m = monthsBetween(start, new Date(s.fecha)) + 1;
+    if (m >= 1 && m <= maxMonths) monthly[m-1].ventas_mes += 1;
+  });
+  // Cumulative
+  let acc = 0;
+  monthly.forEach(row => { acc += row.ventas_mes; row.ventas_acum = acc; });
+
+  // Apply each sale's schedule
+  activeSales.forEach(s => {
+    const events = computeSaleSchedule(s);
+    events.forEach(e => {
+      if (e.m >= 1 && e.m <= maxMonths) {
+        const row = monthly[e.m-1];
+        if (e.kind === 'contado') row.ingreso_contado += e.amount;
+        else if (e.kind === 'ci') row.ingreso_ci += e.amount;
+        else row.ingreso_cuotas += e.amount;
+      }
+    });
+  });
+
+  // Saldos
+  let acumSaldo = 0;
+  monthly.forEach(row => {
+    const ingreso = row.ingreso_contado + row.ingreso_ci + row.ingreso_cuotas;
+    row.ingreso_total = ingreso;
+    row.saldo_mes = ingreso - row.egreso;
+    acumSaldo += row.saldo_mes;
+    row.saldo_acum = acumSaldo;
+  });
+  return monthly;
+}
+
+function computeKPIs() {
+  const sales = state.sales.filter(s => s.status !== 'cancelada');
+  const sold = sales.length;
+  const totalValue = sales.reduce((a,s) => a + s.valor, 0);
+
+  // Cash collected = CI (lump) + monthly payments received up to today
+  const today = new Date();
+  let collected = 0;
+  const coefNeto = 1 - (state.cfg.impuestos_pct / 100);
+  sales.forEach(s => {
+    if (s.tipo === 'contado') {
+      if (new Date(s.fecha) <= today) collected += s.valor * coefNeto;
+    } else {
+      const ci = s.valor * (s.cipct / 100);
+      if (new Date(s.fecha) <= today) collected += ci * coefNeto;
+      // Cuotas mensuales recibidas (net)
+      if (s.fpago) {
+        const fp = new Date(s.fpago);
+        if (fp <= today) {
+          const monthsElapsed = monthsBetween(s.fpago, today.toISOString().slice(0,10)) + 1;
+          const monthsToPay = Math.min(Math.max(0, monthsElapsed), s.plazo);
+          const r = Math.pow(1 + s.tasa/100, 1/12) - 1;
+          const principal = s.valor - ci;
+          const pmtVal = s.sist === 'aleman' ? null : pmt(r, s.plazo, principal);
+          if (pmtVal !== null) {
+            collected += pmtVal * monthsToPay * coefNeto;
+          } else {
+            // Aleman approximate
+            const cap = principal / s.plazo;
+            for (let i = 0; i < monthsToPay; i++) {
+              let saldo = principal - cap * i;
+              collected += (cap + saldo * r) * coefNeto;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // CI promedio (only credito sales)
+  const creditoSales = sales.filter(s => s.tipo === 'credito');
+  const ciAvg = creditoSales.length === 0 ? null :
+    creditoSales.reduce((a,s) => a + s.cipct, 0) / creditoSales.length;
+
+  // Ritmo actual: ventas / meses transcurridos desde primera venta
+  let ritmo = 0;
+  if (sold > 0) {
+    const firstDate = new Date(Math.min(...sales.map(s => new Date(s.fecha))));
+    const monthsSince = Math.max(1, monthsBetween(firstDate.toISOString().slice(0,10), today.toISOString().slice(0,10)) + 1);
+    ritmo = sold / monthsSince;
+  }
+
+  return { sold, totalValue, collected, ciAvg, ritmo };
+}
+
+// =====================================================
+// RENDER
+// =====================================================
+function renderKPIs() {
+  const k = computeKPIs();
+  const cfg = state.cfg;
+
+  const flow = computeMonthlyFlow();
+  const minCash = Math.min(...flow.map(r => r.saldo_acum));
+  const finalCash = flow[flow.length - 1].saldo_acum;
+  const autoFin = state.sales.length === 0 ? null : minCash >= 0;
+
+  const kpis = [
+    { lbl: 'Lotes Vendidos', val: k.sold, sub: `de ${cfg.inv_total} (${(k.sold/cfg.inv_total*100).toFixed(1)}%)`, cls: '' },
+    { lbl: 'Caja Recaudada', val: fmt(k.collected), sub: `Valor ventas: ${fmt(k.totalValue)}`, cls: '' },
+    { lbl: 'Break-even (lotes)', val: `${k.sold} / ${cfg.break_even}`, sub: k.sold >= cfg.break_even ? 'Logrado' : `Faltan ${cfg.break_even - k.sold}`, cls: k.sold >= cfg.break_even ? 'good' : '' },
+    { lbl: 'Auto-financiacion', val: autoFin === null ? '-' : (autoFin ? 'SI' : 'NO'), sub: autoFin === null ? 'Sin ventas' : `Caja Min: ${fmt(minCash)}`, cls: autoFin === null ? '' : (autoFin ? 'good' : 'bad') }
+  ];
+
+  document.getElementById('kpis').innerHTML = kpis.map(k =>
+    `<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`
+  ).join('');
+}
+
+function renderResumen() {
+  const k = computeKPIs();
+  const cfg = state.cfg;
+  const flow = computeMonthlyFlow();
+
+  // Progress bars
+  const bePct = Math.min(100, k.sold / cfg.break_even * 100);
+  document.getElementById('be-actual').textContent = k.sold;
+  document.getElementById('be-target').textContent = cfg.break_even;
+  document.getElementById('be-fill').style.width = bePct + '%';
+  document.getElementById('be-fill').className = 'progress-fill ' + (bePct >= 100 ? 'good' : bePct >= 50 ? 'warn' : 'bad');
+  document.getElementById('be-hint').textContent = `${cfg.break_even} lotes para break-even, ${cfg.break_even_autofin} para auto-financiacion completa (preventa+ritmo)`;
+
+  const invPct = Math.min(100, k.sold / cfg.inv_total * 100);
+  document.getElementById('inv-actual').textContent = k.sold;
+  document.getElementById('inv-total').textContent = cfg.inv_total;
+  document.getElementById('inv-fill').style.width = invPct + '%';
+
+  const cajaPct = Math.min(100, k.collected / cfg.caja_total * 100);
+  document.getElementById('caja-pct').textContent = cajaPct.toFixed(1) + '%';
+  document.getElementById('caja-fill').style.width = cajaPct + '%';
+  document.getElementById('caja-fill').className = 'progress-fill ' + (cajaPct >= 100 ? 'good' : cajaPct >= 50 ? 'warn' : 'bad');
+  document.getElementById('caja-hint').textContent = `Objetivo: ${fmt(cfg.caja_total)} (presupuesto obra + imprevistos + OPEX + preliminares)`;
+
+  // Auto-financiacion status
+  const minCash = Math.min(...flow.map(r => r.saldo_acum));
+  const msgEl = document.getElementById('autofin-msg');
+  const detEl = document.getElementById('autofin-detail');
+  if (state.sales.length === 0) {
+    msgEl.textContent = 'Sin ventas registradas';
+    msgEl.style.color = 'var(--gray)';
+    detEl.textContent = `Meta: ${cfg.preventa_min} lotes preventa + ${cfg.ritmo_target} lotes/mes constantes`;
+  } else if (minCash >= 0) {
+    msgEl.textContent = 'Auto-financiado';
+    msgEl.style.color = 'var(--green)';
+    detEl.textContent = `Caja minima proyectada: ${fmt(minCash)} (no requiere capital externo)`;
+  } else {
+    msgEl.textContent = 'Requiere Capital';
+    msgEl.style.color = 'var(--red)';
+    detEl.textContent = `Brecha de caja: ${fmt(minCash)} en el mes critico`;
+  }
+
+  document.getElementById('ci-avg').textContent = k.ciAvg === null ? '-' : k.ciAvg.toFixed(1) + '%';
+  document.getElementById('ritmo-actual').textContent = k.ritmo.toFixed(1);
+  document.getElementById('imp-pct').textContent = cfg.impuestos_pct.toFixed(1) + '%';
+  // Impuestos retenidos = collected * (impuestos / (1 - impuestos))
+  const impTotal = cfg.impuestos_pct >= 100 ? 0 : k.collected * (cfg.impuestos_pct / 100) / (1 - cfg.impuestos_pct / 100);
+  document.getElementById('imp-total').textContent = fmt(impTotal);
+
+  renderEtapaGauges();
+  renderBreakEvenMix();
+  renderCategoryChart();
+  renderMonthlyChart(flow);
+}
+
+// =====================================================
+// ETAPA GAUGES - core of the operational dashboard
+// =====================================================
+function renderEtapaGauges() {
+  const grid = document.getElementById('etapa-gauges-grid');
+  if (!grid) return; // panel may not exist yet
+  const sales = state.sales.filter(s => s.status !== 'cancelada');
+  const cfg = state.cfg;
+  const coefNeto = 1 - (cfg.impuestos_pct || 0) / 100;
+  const precioNeto = (cfg.precio_avg || 0) * coefNeto;
+  grid.className = 'gauge-grid';
+
+  // Cash collected per sale (CI + cuotas already paid up to today)
+  const today = new Date();
+  function cashCollectedFromSale(s) {
+    if (s.status === 'cancelada') return 0;
+    let cash = 0;
+    if (s.tipo === 'contado') {
+      if (new Date(s.fecha) <= today) cash = s.valor * coefNeto;
+    } else {
+      const ci = s.valor * (s.cipct / 100);
+      if (new Date(s.fecha) <= today) cash += ci * coefNeto;
+      if (s.fpago && new Date(s.fpago) <= today) {
+        const monthsElapsed = monthsBetween(s.fpago, today.toISOString().slice(0,10)) + 1;
+        const monthsToPay = Math.min(Math.max(0, monthsElapsed), s.plazo);
+        const r = Math.pow(1 + s.tasa/100, 1/12) - 1;
+        const principal = s.valor - ci;
+        if (s.sist === 'aleman') {
+          const cap = principal / s.plazo;
+          for (let i = 0; i < monthsToPay; i++) {
+            const saldo = principal - cap * i;
+            cash += (cap + saldo * r) * coefNeto;
+          }
+        } else {
+          const pmtVal = pmt(r, s.plazo, principal);
+          cash += pmtVal * monthsToPay * coefNeto;
+        }
+      }
+    }
+    return cash;
+  }
+
+  function projectedFromSale(s) {
+    // Total eventual after all cuotas paid, net of taxes
+    if (s.status === 'cancelada') return 0;
+    return s.valor * coefNeto;
+  }
+
+  // Build cards
+  grid.innerHTML = ETAPAS.map(e => {
+    const etapaCost = e.directo * e.overhead * 1.1;
+    const unitsNeeded = Math.ceil(etapaCost / precioNeto);
+    // Sales assigned to THIS etapa (or earlier — apply cumulative logic)
+    const myEtapaSales = sales.filter(s => Number(s.etapa) === e.n);
+    const earlierSales = sales.filter(s => Number(s.etapa) > 0 && Number(s.etapa) < e.n);
+    const allRelevant = sales.filter(s => Number(s.etapa) > 0 && Number(s.etapa) <= e.n);
+    const cash = myEtapaSales.reduce((a,s) => a + cashCollectedFromSale(s), 0);
+    const proj = myEtapaSales.reduce((a,s) => a + projectedFromSale(s), 0);
+    const unitsSold = myEtapaSales.length;
+
+    const cashCovPct = Math.min(100, cash / etapaCost * 100);
+    const projCovPct = Math.min(100, proj / etapaCost * 100);
+
+    // Status logic
+    let status, statusText, decision, decisionClass;
+    if (cash >= etapaCost) {
+      status = 'good';
+      statusText = 'Lista';
+      decision = 'Etapa cubierta. Puede iniciar la siguiente.';
+      decisionClass = 'good';
+    } else if (proj >= etapaCost) {
+      status = 'warn';
+      statusText = 'En camino';
+      decision = 'Cuotas futuras cubriran el costo. Esperar cobranzas antes de la siguiente.';
+      decisionClass = 'warn';
+    } else if (unitsSold > 0) {
+      status = 'bad';
+      const missing = Math.max(0, unitsNeeded - unitsSold);
+      statusText = 'Insuficiente';
+      decision = `Vender ${missing} unidad${missing!==1?'es':''} mas para sustentar esta etapa.`;
+      decisionClass = 'bad';
+    } else {
+      status = 'bad';
+      statusText = 'Sin ventas';
+      decision = `Vender al menos ${unitsNeeded} unidades antes de iniciar esta etapa.`;
+      decisionClass = 'bad';
+    }
+
+    return `
+      <div class="gauge-card ${status}">
+        <div class="gc-hdr">
+          <span class="gc-num">ETAPA ${e.n} &middot; M${e.inicio}-M${e.fin}</span>
+          <span class="gc-stat ${status}">${statusText}</span>
+        </div>
+        <div class="gc-name">${e.name}</div>
+        <div class="gc-gauge">
+          <canvas id="gauge-${e.n}"></canvas>
+          <div class="gc-gauge-pct">${cashCovPct.toFixed(0)}%</div>
+        </div>
+        <div class="gc-stats">
+          <div class="gc-stat-row"><span class="lbl">Costo etapa</span><span class="val">${fmt(etapaCost)}</span></div>
+          <div class="gc-stat-row"><span class="lbl">Caja recaudada</span><span class="val good">${fmt(cash)}</span></div>
+          <div class="gc-stat-row"><span class="lbl">Por cobrar (cuotas)</span><span class="val">${fmt(Math.max(0, proj - cash))}</span></div>
+          <div class="gc-stat-row"><span class="lbl">Faltante de cobro</span><span class="val ${cash >= etapaCost?'good':'bad'}">${fmt(Math.max(0, etapaCost - cash))}</span></div>
+          <div class="gc-stat-row"><span class="lbl">Unidades necesarias</span><span class="val">${unitsNeeded}</span></div>
+          <div class="gc-stat-row"><span class="lbl">Unidades vendidas</span><span class="val ${unitsSold >= unitsNeeded?'good':'bad'}">${unitsSold} / ${unitsNeeded}</span></div>
+        </div>
+        <div class="gc-decision ${decisionClass}">${decision}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Render gauges (semi-circle doughnuts)
+  ETAPAS.forEach(e => {
+    const etapaCost = e.directo * e.overhead * 1.1;
+    const myEtapaSales = sales.filter(s => Number(s.etapa) === e.n);
+    const cash = myEtapaSales.reduce((a,s) => a + cashCollectedFromSale(s), 0);
+    const pct = Math.min(100, cash / etapaCost * 100);
+    const proj = myEtapaSales.reduce((a,s) => a + projectedFromSale(s), 0);
+    const projPct = Math.min(100, Math.max(0, (proj - cash) / etapaCost * 100));
+    const remaining = Math.max(0, 100 - pct - projPct);
+
+    const color = pct >= 100 ? '#2D7A4F' : proj >= etapaCost ? '#C9A227' : '#C0392B';
+    const canvas = document.getElementById(`gauge-${e.n}`);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (window[`_gauge_${e.n}`]) window[`_gauge_${e.n}`].destroy();
+    window[`_gauge_${e.n}`] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [pct, projPct, remaining],
+          backgroundColor: [color, 'rgba(201,162,39,0.4)', '#E8E8E8'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '72%',
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  });
+}
+
+// =====================================================
+// BREAK-EVEN MIX (3 scenarios)
+// =====================================================
+function renderBreakEvenMix() {
+  const block = document.getElementById('be-mix-block');
+  if (!block) return;
+  const cfg = state.cfg;
+  const coefNeto = 1 - (cfg.impuestos_pct || 0) / 100;
+  const precioBruto = cfg.precio_avg || 0;
+  const precioNeto = precioBruto * coefNeto;
+  const mixContado = (cfg.mix_contado || 0) / 100;
+  const ciDefault = (cfg.ci_default || 0) / 100;
+  const cajaTotal = cfg.caja_total || 0;
+
+  // Scenario 1: Full eventual coverage (all lots fully paid). Units = caja / precio_neto
+  const fullUnits = Math.ceil(cajaTotal / precioNeto);
+
+  // Scenario 2: Upfront only (cash now: contado pays full, credito pays only CI)
+  // Cash upfront per lote (weighted by mix) = Mix_contado * Precio_neto + (1-Mix_contado) * Precio_neto * CI
+  const upfrontPerLote = (mixContado + (1 - mixContado) * ciDefault) * precioNeto;
+  const upfrontUnits = upfrontPerLote > 0 ? Math.ceil(cajaTotal / upfrontPerLote) : 0;
+
+  // Scenario 3: Mix-weighted (24-month horizon assumption) — cash at end of project (~M14)
+  // Approx: contado lots = full price by M14. Credito lots = CI + (14/plazo) * principal received
+  const plazo = cfg.plazo_default;
+  const cashByM14PerLote = mixContado * precioNeto + (1 - mixContado) * (ciDefault + (1-ciDefault) * Math.min(14, plazo) / plazo) * precioNeto;
+  const m14Units = cashByM14PerLote > 0 ? Math.ceil(cajaTotal / cashByM14PerLote) : 0;
+
+  block.innerHTML = `
+    <div class="be-mix-grid">
+      <div class="be-mix-card" style="border-left: 4px solid var(--red)">
+        <div class="be-mix-name">Caja Upfront (cash inmediato)</div>
+        <div class="be-mix-units">${upfrontUnits} lotes</div>
+        <div class="be-mix-detail">
+          Asume mix actual ${(mixContado*100).toFixed(0)}% contado / ${((1-mixContado)*100).toFixed(0)}% credito con cuota inicial ${(ciDefault*100).toFixed(0)}%.
+          Solo contabiliza cash que entra al firmar (contado completo + cuota inicial del credito), descontados impuestos ${cfg.impuestos_pct}%.
+        </div>
+        <div class="be-mix-formula">cash/lote = ${fmt(upfrontPerLote)}</div>
+      </div>
+      <div class="be-mix-card" style="border-left: 4px solid var(--gold)">
+        <div class="be-mix-name">Caja al fin de obra (M14)</div>
+        <div class="be-mix-units">${m14Units} lotes</div>
+        <div class="be-mix-detail">
+          Cash recaudado al terminar la obra: contado completo + CI + ${Math.min(14, plazo)} meses de cuotas mensuales recibidas para creditos a ${plazo}m. Descontados impuestos.
+        </div>
+        <div class="be-mix-formula">cash/lote (M14) = ${fmt(cashByM14PerLote)}</div>
+      </div>
+      <div class="be-mix-card" style="border-left: 4px solid var(--green)">
+        <div class="be-mix-name">Cobertura completa (eventual)</div>
+        <div class="be-mix-units">${fullUnits} lotes</div>
+        <div class="be-mix-detail">
+          Lotes minimos asumiendo que TODAS las cuotas se cobran. Es el limite teorico de break-even financiero del proyecto.
+        </div>
+        <div class="be-mix-formula">cash/lote = ${fmt(precioNeto)}</div>
+      </div>
+    </div>
+    <div class="muted sm" style="margin-top: 12px; padding: 8px 10px; background: var(--bg); border-radius: 6px">
+      <b>Interpretacion:</b> Con la estructura comercial actual (CI ${(ciDefault*100).toFixed(0)}%, mix ${(mixContado*100).toFixed(0)}/${((1-mixContado)*100).toFixed(0)}, impuestos ${cfg.impuestos_pct}%),
+      para cubrir el proyecto solo con cash inmediato hace falta vender ${upfrontUnits} lotes;
+      con cobranza progresiva durante la obra, ${m14Units} lotes; y para cobertura financiera total (con todas las cuotas cobradas), ${fullUnits} lotes.
+      <b>La meta operativa es ${m14Units} lotes durante la obra.</b>
+    </div>
+  `;
+}
+
+function renderVentas() {
+  const tbody = document.getElementById('ventas-body');
+  if (state.sales.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" class="empty">No hay ventas registradas. Click en "+ Nueva Venta" para empezar.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = state.sales.map((s, idx) => {
+    const ci = s.tipo === 'credito' ? s.valor * s.cipct / 100 : s.valor;
+    const principal = s.tipo === 'credito' ? s.valor - ci : 0;
+    const r = Math.pow(1 + s.tasa/100, 1/12) - 1;
+    const pmtVal = s.tipo === 'credito' && s.sist !== 'aleman' ? pmt(r, s.plazo, principal) : null;
+    const cuotaMes = s.tipo === 'contado' ? '-' : (pmtVal ? fmt(pmtVal) : 'Var. (Aleman)');
+    const tipoPill = s.tipo === 'contado' ? '<span class="pill pill-cont">Contado</span>' : '<span class="pill pill-cred">Credito</span>';
+    const statPill = s.status === 'activa' ? '<span class="pill pill-act">Activa</span>' :
+                     s.status === 'atrasada' ? '<span class="pill pill-ate">Atrasada</span>' :
+                     '<span class="pill pill-can">Cancelada</span>';
+    return `
+      <tr>
+        <td><b>${s.lote || '-'}</b></td>
+        <td>${s.etapa || '-'}</td>
+        <td>${s.cliente}</td>
+        <td>${s.fecha}</td>
+        <td class="t-num">${fmt(s.valor)}</td>
+        <td>${tipoPill}</td>
+        <td class="t-num">${s.tipo === 'credito' ? fmt(ci) + ' (' + s.cipct + '%)' : '-'}</td>
+        <td class="t-num">${cuotaMes}</td>
+        <td>${statPill}</td>
+        <td>
+          <button class="btn btn-sec btn-sm" onclick="editSale(${idx})">Editar</button>
+          <button class="btn btn-dl btn-sm" onclick="deleteSale(${idx})">X</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderFlujo() {
+  const flow = computeMonthlyFlow();
+  // Chart
+  const ctx = document.getElementById('chart-flow').getContext('2d');
+  if (window._chartFlow) window._chartFlow.destroy();
+  window._chartFlow = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: flow.map(r => 'M' + r.m),
+      datasets: [
+        { label: 'Ingresos', data: flow.map(r => r.ingreso_total), backgroundColor: 'rgba(45,122,79,0.7)', borderColor: 'rgba(45,122,79,1)', stack: 'a' },
+        { label: 'Egresos (negativo)', data: flow.map(r => -r.egreso), backgroundColor: 'rgba(192,57,43,0.7)', borderColor: 'rgba(192,57,43,1)', stack: 'a' },
+        { label: 'Saldo Acumulado', data: flow.map(r => r.saldo_acum), type: 'line', borderColor: 'rgba(31,56,100,1)', backgroundColor: 'rgba(31,56,100,0.1)', borderWidth: 2, fill: false, tension: 0.2, yAxisID: 'y' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { font: { size: 11 } } } },
+      scales: {
+        y: { ticks: { callback: v => fmt(v), font: { size: 10 } } },
+        x: { ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 30 } }
+      }
+    }
+  });
+
+  // Table
+  const tbody = document.getElementById('flujo-body');
+  tbody.innerHTML = flow.map(r => `
+    <tr>
+      <td><b>M${r.m}</b></td>
+      <td class="t-num">${r.ventas_mes}</td>
+      <td class="t-num">${r.ventas_acum}</td>
+      <td class="t-num">${fmt(r.ingreso_ci + r.ingreso_contado)}</td>
+      <td class="t-num">${fmt(r.ingreso_cuotas)}</td>
+      <td class="t-num"><b>${fmt(r.ingreso_total)}</b></td>
+      <td class="t-num">${fmt(r.egreso)}</td>
+      <td class="t-num" style="color:${r.saldo_mes >= 0 ? 'var(--green)' : 'var(--red)'}">${fmt(r.saldo_mes)}</td>
+      <td class="t-num" style="color:${r.saldo_acum >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${fmt(r.saldo_acum)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderEtapas() {
+  const cfg = state.cfg;
+  const sales = state.sales.filter(s => s.status !== 'cancelada');
+
+  // Group sales by etapa
+  const byEtapa = {};
+  ETAPAS.forEach(e => byEtapa[e.n] = { sales: [], totalValue: 0 });
+  sales.forEach(s => {
+    if (s.etapa && byEtapa[s.etapa]) {
+      byEtapa[s.etapa].sales.push(s);
+      byEtapa[s.etapa].totalValue += s.valor;
+    }
+  });
+
+  // Cumulative cash needed up to end of each etapa
+  const flow = computeMonthlyFlow();
+
+  // Precio neto por lote (despues de impuestos)
+  const coefNeto = 1 - (cfg.impuestos_pct / 100);
+  const precioNeto = cfg.precio_avg * coefNeto;
+
+  // Lotes acumulados necesarios por etapa (por costo, independiente del flujo)
+  let lotsCumNeeded = 0;
+  const grid = document.getElementById('etapas-grid');
+  grid.innerHTML = ETAPAS.map(e => {
+    const data = byEtapa[e.n];
+    const etapaCost = e.directo * e.overhead * 1.1; // Direct + Admin + Util + Imprev
+    const lotesNeededEtapa = Math.ceil(etapaCost / precioNeto);
+    lotsCumNeeded += lotesNeededEtapa;
+    // Cumulative egreso through end of etapa (cash flow timing)
+    const cumEgrEtapa = flow.slice(0, e.fin).reduce((a,r) => a + r.egreso, 0);
+    const cumIngresoEtapa = flow.slice(0, e.fin).reduce((a,r) => a + r.ingreso_total, 0);
+    const saldo = cumIngresoEtapa - cumEgrEtapa;
+    // Status: green if saldo positive AND enough lots sold
+    const lotsSold = data.sales.length;
+    const lotsOk = lotsSold >= lotesNeededEtapa;
+    const cls = saldo >= 0 && lotsOk ? 'good' : (saldo >= 0 || lotsSold >= lotesNeededEtapa * 0.5) ? 'warn' : 'bad';
+    return `
+      <div class="etapa-card ${cls}">
+        <div class="etapa-num">ETAPA ${e.n} &middot; M${e.inicio}-M${e.fin}</div>
+        <div class="etapa-name">${e.name}</div>
+        <div class="etapa-stats">
+          <div><div class="etapa-stat-lbl">Costo c/overhead+imprev</div><div class="etapa-stat-val">${fmt(etapaCost)}</div></div>
+          <div><div class="etapa-stat-lbl">Lotes vendidos (asignados)</div><div class="etapa-stat-val">${lotsSold}</div></div>
+          <div><div class="etapa-stat-lbl" style="color:var(--blue);font-weight:700">Lotes Necesarios (costo)</div><div class="etapa-stat-val" style="font-size:14px;color:var(--blue)">${lotesNeededEtapa}</div></div>
+          <div><div class="etapa-stat-lbl">Acumulado necesario</div><div class="etapa-stat-val">${lotsCumNeeded}</div></div>
+          <div><div class="etapa-stat-lbl">Saldo al fin (flujo)</div><div class="etapa-stat-val" style="color:${saldo>=0?'var(--green)':'var(--red)'}">${fmt(saldo)}</div></div>
+          <div><div class="etapa-stat-lbl">Status</div><div class="etapa-stat-val" style="color:${lotsOk?'var(--green)':'var(--red)'};font-size:11px">${lotsOk?'OK':'Faltan '+(lotesNeededEtapa-lotsSold)}</div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Chart: cumulative lotes needed vs sold by etapa
+  const labels = ETAPAS.map(e => `E${e.n}`);
+  const cumEgr = ETAPAS.map(e => flow.slice(0, e.fin).reduce((a,r) => a + r.egreso, 0));
+  const cumIng = ETAPAS.map(e => flow.slice(0, e.fin).reduce((a,r) => a + r.ingreso_total, 0));
+  const cumVentas = ETAPAS.map(e => flow.slice(0, e.fin).reduce((a,r) => a + r.ventas_mes, 0));
+
+  const ctx = document.getElementById('chart-etapas').getContext('2d');
+  if (window._chartEtapas) window._chartEtapas.destroy();
+  window._chartEtapas = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        { label: 'Egreso acumulado obra', data: cumEgr, type: 'bar', backgroundColor: 'rgba(192,57,43,0.7)', yAxisID: 'y' },
+        { label: 'Ingreso acumulado', data: cumIng, type: 'bar', backgroundColor: 'rgba(45,122,79,0.7)', yAxisID: 'y' },
+        { label: 'Lotes vendidos (acum)', data: cumVentas, type: 'line', borderColor: 'rgba(31,56,100,1)', backgroundColor: 'rgba(31,56,100,0.1)', yAxisID: 'y1', borderWidth: 3, tension: 0.2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: { position: 'left', title: { display: true, text: 'COP' }, ticks: { callback: v => fmt(v) } },
+        y1: { position: 'right', title: { display: true, text: 'Lotes' }, grid: { drawOnChartArea: false }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderConfig() {
+  const cfg = state.cfg;
+  document.getElementById('cfg-inv').value = cfg.inv_total;
+  document.getElementById('cfg-valor').value = cfg.valor_catalogo;
+  document.getElementById('cfg-precio').value = cfg.precio_avg;
+  document.getElementById('cfg-obra').value = cfg.costo_obra;
+  document.getElementById('cfg-caja').value = cfg.caja_total;
+  document.getElementById('cfg-be').value = cfg.break_even;
+  document.getElementById('cfg-pv').value = cfg.preventa_min;
+  document.getElementById('cfg-ritmo').value = cfg.ritmo_target;
+  document.getElementById('cfg-ci').value = cfg.ci_default;
+  document.getElementById('cfg-plazo').value = cfg.plazo_default;
+  document.getElementById('cfg-tasa').value = cfg.tasa_default;
+  document.getElementById('cfg-mix').value = cfg.mix_contado;
+  document.getElementById('cfg-imp').value = cfg.impuestos_pct;
+
+  const tbody = document.getElementById('etapas-cfg-body');
+  tbody.innerHTML = ETAPAS.map(e => `
+    <tr>
+      <td><b>Etapa ${e.n}</b></td>
+      <td>${e.name}</td>
+      <td class="t-num">M${e.inicio}</td>
+      <td class="t-num">M${e.fin}</td>
+      <td class="t-num">${fmt(e.directo)}</td>
+      <td class="t-num">${fmt(e.directo * e.overhead * 1.1)}</td>
+    </tr>
+  `).join('');
+}
+
+// renderCashChart removed - 65-month cumulative chart replaced by etapa gauges
+
+function renderCategoryChart() {
+  const sales = state.sales.filter(s => s.status !== 'cancelada');
+  const byCat = {};
+  sales.forEach(s => { byCat[s.cat] = (byCat[s.cat] || 0) + 1; });
+  const labels = Object.keys(byCat);
+  const data = Object.values(byCat);
+  const ctx = document.getElementById('chart-cat').getContext('2d');
+  if (window._chartCat) window._chartCat.destroy();
+  if (labels.length === 0) {
+    ctx.canvas.parentNode.innerHTML = '<div class="empty">Sin ventas registradas</div>';
+    return;
+  }
+  window._chartCat = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: ['#1F3864','#2E75B6','#C9A227','#2D7A4F','#6B6B6B'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+  });
+}
+
+function renderMonthlyChart(flow) {
+  const ctx = document.getElementById('chart-monthly').getContext('2d');
+  if (window._chartMonthly) window._chartMonthly.destroy();
+  const target = state.cfg.ritmo_target;
+  window._chartMonthly = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: flow.slice(0, 20).map(r => 'M' + r.m),
+      datasets: [
+        { label: 'Vendidos', data: flow.slice(0, 20).map(r => r.ventas_mes), backgroundColor: 'rgba(31,56,100,0.8)' },
+        { label: `Meta (${target}/mes)`, data: flow.slice(0, 20).map(() => target), type: 'line', borderColor: 'rgba(201,162,39,1)', borderDash: [5,5], pointRadius: 0, borderWidth: 2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+// =====================================================
+// SALE MODAL
+// =====================================================
+let editIdx = -1;
+
+function openSaleModal(idx = -1) {
+  editIdx = idx;
+  document.getElementById('modal-ttl').textContent = idx < 0 ? 'Nueva Venta' : 'Editar Venta';
+
+  // Populate etapas dropdown
+  const sel = document.getElementById('f-etapa');
+  sel.innerHTML = '<option value="">- Seleccionar -</option>' +
+    ETAPAS.map(e => `<option value="${e.n}">Etapa ${e.n} - ${e.name}</option>`).join('');
+
+  // Populate lote dropdown from catalog (only available + not already sold)
+  const loteSel = document.getElementById('f-lote');
+  const soldLotes = new Set(state.sales.filter((s,i) => i !== idx && s.status !== 'cancelada').map(s => String(s.lote)));
+  const availableLotes = (state.catalog || []).filter(l => l.disponible && !soldLotes.has(String(l.lote)));
+
+  if (availableLotes.length === 0) {
+    loteSel.innerHTML = '<option value="">- Importe Excel para cargar catalogo -</option>';
+  } else {
+    // Group by category
+    const byCat = {};
+    availableLotes.forEach(l => {
+      const c = l.cat || 'Sin categoria';
+      if (!byCat[c]) byCat[c] = [];
+      byCat[c].push(l);
+    });
+    let html = '<option value="">- Seleccionar lote -</option>';
+    const catOrder = ['Plus', 'light', 'sub urbanos', 'via', 'interio'];
+    const sortedCats = Object.keys(byCat).sort((a, b) => {
+      const ai = catOrder.indexOf(a); const bi = catOrder.indexOf(b);
+      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+    });
+    sortedCats.forEach(cat => {
+      const lots = byCat[cat].sort((a, b) => a.lote - b.lote);
+      html += `<optgroup label="${cat} (${lots.length} disponibles)">`;
+      lots.forEach(l => {
+        html += `<option value="${l.lote}" data-cat="${l.cat}" data-m2="${l.m2}" data-valor="${l.valor}">Lote ${l.lote} - ${fmt(l.valor)} (${l.m2.toFixed(0)} m2)</option>`;
+      });
+      html += '</optgroup>';
+    });
+    loteSel.innerHTML = html;
+  }
+
+  if (idx < 0) {
+    document.getElementById('f-lote').value = '';
+    document.getElementById('f-etapa').value = '';
+    document.getElementById('f-cliente').value = '';
+    document.getElementById('f-cat').value = 'Plus';
+    document.getElementById('f-fecha').value = new Date().toISOString().slice(0,10);
+    document.getElementById('f-valor').value = state.cfg.precio_avg;
+    document.getElementById('f-tipo').value = 'credito';
+    document.getElementById('f-status').value = 'activa';
+    document.getElementById('f-cipct').value = state.cfg.ci_default;
+    document.getElementById('f-plazo').value = state.cfg.plazo_default;
+    document.getElementById('f-tasa').value = state.cfg.tasa_default;
+    document.getElementById('f-sist').value = 'frances';
+    document.getElementById('f-fpago').value = '';
+  } else {
+    const s = state.sales[idx];
+    // When editing, the lote dropdown might not include the current sale's lote — add it
+    const loteSel = document.getElementById('f-lote');
+    if (s.lote && !Array.from(loteSel.options).some(o => o.value === String(s.lote))) {
+      const opt = document.createElement('option');
+      opt.value = s.lote;
+      opt.textContent = `Lote ${s.lote} (actual)`;
+      loteSel.insertBefore(opt, loteSel.options[1] || null);
+    }
+    document.getElementById('f-lote').value = s.lote || '';
+    document.getElementById('f-etapa').value = s.etapa || '';
+    document.getElementById('f-cliente').value = s.cliente;
+    document.getElementById('f-cat').value = s.cat || 'Plus';
+    document.getElementById('f-fecha').value = s.fecha;
+    document.getElementById('f-valor').value = s.valor;
+    document.getElementById('f-tipo').value = s.tipo;
+    document.getElementById('f-status').value = s.status;
+    document.getElementById('f-cipct').value = s.cipct || 30;
+    document.getElementById('f-plazo').value = s.plazo || 60;
+    document.getElementById('f-tasa').value = s.tasa || 14;
+    document.getElementById('f-sist').value = s.sist || 'frances';
+    document.getElementById('f-fpago').value = s.fpago || '';
+  }
+  toggleFin();
+  recalcFin();
+  document.getElementById('modal-sale').classList.add('on');
+}
+
+function onLoteSelected() {
+  const sel = document.getElementById('f-lote');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.value) return;
+  const cat = opt.dataset.cat;
+  const valor = parseFloat(opt.dataset.valor);
+  if (cat) document.getElementById('f-cat').value = cat;
+  if (valor && !isNaN(valor)) {
+    document.getElementById('f-valor').value = Math.round(valor);
+    recalcFin();
+  }
+}
+
+function closeSaleModal() {
+  document.getElementById('modal-sale').classList.remove('on');
+}
+
+function toggleFin() {
+  const tipo = document.getElementById('f-tipo').value;
+  document.getElementById('fin-block').style.display = tipo === 'credito' ? 'block' : 'none';
+}
+
+function recalcFin() {
+  const val = parseFloat(document.getElementById('f-valor').value) || 0;
+  const cipct = parseFloat(document.getElementById('f-cipct').value) || 0;
+  const plazo = parseInt(document.getElementById('f-plazo').value);
+  const tasa = parseFloat(document.getElementById('f-tasa').value) || 0;
+  const sist = document.getElementById('f-sist').value;
+
+  const ci = val * cipct / 100;
+  const saldo = val - ci;
+  const r = Math.pow(1 + tasa/100, 1/12) - 1;
+  let pmtVal = 0;
+  if (sist === 'frances') pmtVal = pmt(r, plazo, saldo);
+  else pmtVal = saldo / plazo + saldo * r; // first month aleman approx
+
+  document.getElementById('f-ci').value = Math.round(ci);
+  document.getElementById('f-saldo').value = Math.round(saldo);
+  document.getElementById('f-pmt').value = Math.round(pmtVal);
+}
+
+function saveSale() {
+  const tipo = document.getElementById('f-tipo').value;
+  const fecha = document.getElementById('f-fecha').value;
+  const cliente = document.getElementById('f-cliente').value.trim();
+  const valor = parseFloat(document.getElementById('f-valor').value);
+
+  if (!cliente || !fecha || !valor) {
+    alert('Cliente, fecha y valor son obligatorios');
+    return;
+  }
+
+  const sale = {
+    id: editIdx < 0 ? Date.now() : state.sales[editIdx].id,
+    lote: String(document.getElementById('f-lote').value || '').trim(),
+    etapa: parseInt(document.getElementById('f-etapa').value) || null,
+    cliente,
+    cat: document.getElementById('f-cat').value,
+    fecha,
+    valor,
+    tipo,
+    status: document.getElementById('f-status').value
+  };
+
+  if (tipo === 'credito') {
+    sale.cipct = parseFloat(document.getElementById('f-cipct').value);
+    sale.plazo = parseInt(document.getElementById('f-plazo').value);
+    sale.tasa = parseFloat(document.getElementById('f-tasa').value);
+    sale.sist = document.getElementById('f-sist').value;
+    sale.fpago = document.getElementById('f-fpago').value || null;
+  }
+
+  if (editIdx < 0) state.sales.push(sale);
+  else state.sales[editIdx] = sale;
+
+  save();
+  renderAll();
+  closeSaleModal();
+}
+
+function editSale(idx) {
+  openSaleModal(idx);
+}
+
+function deleteSale(idx) {
+  if (!confirm('Eliminar esta venta?')) return;
+  state.sales.splice(idx, 1);
+  save();
+  renderAll();
+}
+
+// =====================================================
+// DATA I/O
+// =====================================================
+function exportData() {
+  const payload = { sales: state.sales, cfg: state.cfg, etapas: ETAPAS, egresos_mes: EGRESOS_MES };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'manzanares_ventas_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(ev) {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!confirm('Importar reemplazara los datos actuales. Continuar?')) return;
+      state.sales = parsed.sales || [];
+      state.cfg = { ...DEFAULT_CFG, ...(parsed.cfg || {}) };
+      save();
+      renderAll();
+    } catch(err) {
+      alert('Archivo JSON invalido');
+    }
+  };
+  reader.readAsText(f);
+}
+
+// =====================================================
+// EXCEL IMPORT - reads 01_Modelo_Financiero_Manzanares.xlsx and updates config
+// =====================================================
+function importExcel(ev) {
+  const f = ev.target.files[0];
+  if (!f) return;
+  if (typeof XLSX === 'undefined') {
+    alert('Libreria SheetJS no cargada. Revise su conexion a internet.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', cellNF: false, cellText: false, cellStyles: true, cellFormula: true });
+      _loadedWorkbook = wb;
+      _loadedFileName = f.name;
+      const supuestos = wb.Sheets['Supuestos'];
+      const etapas = wb.Sheets['Etapas'];
+      if (!supuestos || !etapas) {
+        alert('El Excel debe tener las hojas "Supuestos" y "Etapas". Use el archivo 01_Modelo_Financiero_Manzanares.xlsx.');
+        return;
+      }
+
+      // Helper: get numeric value from a cell (handles formulas with cached values)
+      const num = (sheet, ref) => {
+        const c = sheet[ref];
+        if (!c) return null;
+        if (typeof c.v === 'number') return c.v;
+        if (c.t === 'n' && c.v !== undefined) return Number(c.v);
+        return null;
+      };
+      const str = (sheet, ref) => {
+        const c = sheet[ref];
+        return c && c.v !== undefined ? String(c.v) : null;
+      };
+
+      // ==== Extract Supuestos ====
+      // Row layout (based on current model):
+      // C6=N_lotes_total, C7=N_lotes_disp, C8=Valor_disp, C9=Precio_avg
+      // C11=Mix_contado, C13=CI_credito, C14=Plazo, C15=Tasa_EA, C17=Impuestos
+      // C21=Ritmo_ventas, C22=Preventa_min
+      // C24=Costo_directo, C25=Admin, C26=Util, C27=Costo_obra, C28=Imprev
+      // C29=OPEX, C30=Prelim, C31=FINAL_no_cash, C32=Caja_total, C33=Costo_total_proyecto
+      const newCfg = { ...state.cfg };
+      const mapNumPct = (ref, key, isPct) => {
+        const v = num(supuestos, ref);
+        if (v !== null) newCfg[key] = isPct ? v * 100 : v;
+      };
+      mapNumPct('C6',  'inv_total',              false);
+      mapNumPct('C8',  'valor_catalogo',         false);
+      mapNumPct('C9',  'precio_avg',             false);
+      mapNumPct('C11', 'mix_contado',            true);
+      mapNumPct('C13', 'ci_default',             true);
+      mapNumPct('C14', 'plazo_default',          false);
+      mapNumPct('C15', 'tasa_default',           true);
+      mapNumPct('C17', 'impuestos_pct',          true);
+      mapNumPct('C21', 'ritmo_target',           false);
+      mapNumPct('C22', 'preventa_min',           false);
+      mapNumPct('C27', 'costo_obra',             false);
+      mapNumPct('C32', 'caja_total',             false);
+      mapNumPct('C33', 'costo_total_proyecto',   false);
+
+      // ==== Extract Etapas Section A (V.TOTAL + mes inicio/fin) ====
+      // Rows 7-14, B=nombre, C=mes inicio, D=mes fin, F=V.TOTAL
+      const newEtapas = [];
+      for (let i = 0; i < 8; i++) {
+        const r = 7 + i;
+        const directo = num(etapas, `F${r}`);
+        const inicio = num(etapas, `C${r}`);
+        const fin = num(etapas, `D${r}`);
+        const name = str(etapas, `B${r}`);
+        const defaults = ETAPAS[i];
+        newEtapas.push({
+          n: i + 1,
+          name: name || defaults.name,
+          inicio: inicio || defaults.inicio,
+          fin: fin || defaults.fin,
+          directo: directo || defaults.directo,
+          overhead: defaults.overhead
+        });
+      }
+
+      // ==== Extract Etapas Section C row 51 (TOTAL EGRESOS POR MES cash) ====
+      // Cols C-P (M1-M14)
+      const newEgresos = [];
+      for (let m = 0; m < 14; m++) {
+        const col = String.fromCharCode('C'.charCodeAt(0) + m);
+        const val = num(etapas, `${col}51`);
+        newEgresos.push(val !== null ? val : EGRESOS_MES[m]);
+      }
+
+      // ==== Extract Etapa monthly weights (rows 34-41, cols C-P) ====
+      const newWeights = [];
+      for (let i = 0; i < 8; i++) {
+        const row = 34 + i;
+        const monthly = [];
+        for (let m = 0; m < 14; m++) {
+          const col = String.fromCharCode('C'.charCodeAt(0) + m);
+          monthly.push(num(etapas, `${col}${row}`) || 0);
+        }
+        const total = monthly.reduce((a,b) => a+b, 0);
+        const w = total > 0 ? monthly.map(v => v/total) : Array(14).fill(0);
+        newWeights.push(w);
+      }
+
+      // ==== Extract Catalog from Supuestos rows 48-175 (B=lote, C=cat, D=m2, E=valor, F=disponible) ====
+      const newCatalog = [];
+      for (let r = 48; r <= 175; r++) {
+        const lote = num(supuestos, `B${r}`);
+        const cat = str(supuestos, `C${r}`);
+        const m2 = num(supuestos, `D${r}`);
+        const valor = num(supuestos, `E${r}`);
+        const disp = str(supuestos, `F${r}`);
+        if (lote !== null && valor !== null && valor > 0) {
+          newCatalog.push({
+            lote: lote,
+            cat: cat || '',
+            m2: m2 || 0,
+            valor: valor,
+            disponible: disp === 'SI' || disp === 'si' || disp === null
+          });
+        }
+      }
+
+      // ==== Extract Sheet2 activities (per-activity priorities) ====
+      const sheet2 = wb.Sheets['Sheet2'];
+      const newActivities = [];
+      if (sheet2) {
+        let r = 2;
+        while (r < 200) {
+          const desc = str(sheet2, `A${r}`);
+          const vTotal = num(sheet2, `E${r}`);
+          if (!desc || vTotal === null || vTotal === 0) { r++; continue; }
+          // Skip subtotal rows
+          const upper = desc.toUpperCase();
+          if (upper.includes('COSTO DIRECTO') || upper.includes('ADMINI') || upper.includes('UTILIDAD') || upper.includes('VALOR TOTAL') || upper.includes('COSTO INDIRECTO')) {
+            r++; continue;
+          }
+          const capitulo = str(sheet2, `F${r}`);
+          const prioCell = sheet2[`G${r}`];
+          let prio = null;
+          if (prioCell) {
+            prio = (typeof prioCell.v === 'number') ? prioCell.v : String(prioCell.v).trim();
+          }
+          newActivities.push({
+            id: r,
+            desc: desc,
+            capitulo: capitulo || '',
+            vTotal: vTotal,
+            originalPriority: prio,
+            currentPriority: prio
+          });
+          r++;
+        }
+      }
+
+      // Confirm with user
+      const msg = `Importar configuracion desde Excel?\n\n` +
+        `Inventario: ${newCfg.inv_total} lotes\n` +
+        `Precio avg: ${fmt(newCfg.precio_avg)}\n` +
+        `Caja Necesaria (cash): ${fmt(newCfg.caja_total)}\n` +
+        `Costo Total Proyecto: ${fmt(newCfg.costo_total_proyecto)}\n` +
+        `Cuota Inicial default: ${newCfg.ci_default.toFixed(1)}%\n` +
+        `Impuestos: ${newCfg.impuestos_pct.toFixed(1)}%\n` +
+        `Preventa min: ${newCfg.preventa_min}\n` +
+        `Ritmo: ${newCfg.ritmo_target} lotes/mes\n\n` +
+        `Etapa 2 V.TOTAL: ${fmt(newEtapas[1].directo)}\n` +
+        `Actividades leidas (Sheet2): ${newActivities.length}\n` +
+        `Total egresos M1-M14: ${fmt(newEgresos.reduce((a,b) => a+b, 0))}\n\n` +
+        `Las ventas registradas se conservan.`;
+      if (!confirm(msg)) return;
+
+      // Apply
+      state.cfg = newCfg;
+      ETAPAS = newEtapas;
+      EGRESOS_MES = newEgresos;
+      ETAPA_MONTHLY_WEIGHTS = newWeights;
+      state.activities = newActivities;
+      state.catalog = newCatalog;
+      state.priority_overrides = {};
+      save();
+      renderAll();
+      alert(`Excel importado correctamente. Dashboard actualizado.\n` +
+        `${newActivities.length} actividades cargadas en pestaña "Actividades & Prioridades".\n` +
+        `${newCatalog.length} lotes cargados al catalogo (selector en nueva venta).`);
+    } catch (err) {
+      console.error('Error importando Excel:', err);
+      alert('Error leyendo Excel: ' + err.message);
+    } finally {
+      ev.target.value = ''; // allow re-import of same file
+    }
+  };
+  reader.readAsArrayBuffer(f);
+}
+
+function resetData() {
+  if (!confirm('Esto eliminara TODAS las ventas registradas. Continuar?')) return;
+  state.sales = [];
+  save();
+  renderAll();
+}
+
+// =====================================================
+// ACTIVITIES & PRIORITIES (re-aggregate etapas dynamically)
+// =====================================================
+function recomputeFromActivities() {
+  if (!state.activities || state.activities.length === 0) return false;
+
+  const etapaTotals = [0,0,0,0,0,0,0,0];
+  let opexTotal = 0, prelimTotal = 0, finalTotal = 0;
+
+  state.activities.forEach(a => {
+    const p = state.priority_overrides[a.id] !== undefined ? state.priority_overrides[a.id] : a.originalPriority;
+    if (p === 'OPEX') opexTotal += a.vTotal;
+    else if (p === 'FINAL') finalTotal += a.vTotal;
+    else if (p === 0 || p === '0') prelimTotal += a.vTotal;
+    else {
+      const pNum = typeof p === 'number' ? p : parseInt(p);
+      if (PRIORITY_TO_ETAPA[pNum]) {
+        etapaTotals[PRIORITY_TO_ETAPA[pNum] - 1] += a.vTotal;
+      }
+    }
+    a.currentPriority = p;
+  });
+
+  // Update ETAPAS direct values
+  for (let i = 0; i < 8; i++) {
+    ETAPAS[i].directo = etapaTotals[i];
+  }
+
+  // Recompute monthly egresos
+  const adminPct = 0.17;
+  const utilPct = 0.05;
+  const imprevPct = 0.10;
+  // Direct cost cash by month = etapas (with weights) + OPEX (distributed evenly) + Prelim (M1)
+  // Then multiplied by (1+admin+util)*(1+imprev)
+  const overheadMult = (1 + adminPct + utilPct) * (1 + imprevPct);
+
+  // OPEX even distribution over 14 months (matches original distribution behavior)
+  const opexPerMonth = opexTotal / 14;
+
+  const newEgresos = [];
+  for (let m = 0; m < 14; m++) {
+    let directM = 0;
+    for (let e = 0; e < 8; e++) {
+      const w = (ETAPA_MONTHLY_WEIGHTS[e] && ETAPA_MONTHLY_WEIGHTS[e][m]) || 0;
+      directM += etapaTotals[e] * w;
+    }
+    directM += opexPerMonth;
+    if (m === 0) directM += prelimTotal;
+    newEgresos.push(directM * overheadMult);
+  }
+  EGRESOS_MES = newEgresos;
+
+  // Update derived cfg values
+  const totalCashDirect = etapaTotals.reduce((a,b)=>a+b,0) + opexTotal + prelimTotal;
+  state.cfg.caja_total = totalCashDirect * overheadMult;
+  state.cfg.costo_total_proyecto = (totalCashDirect + finalTotal) * overheadMult;
+  state.cfg.costo_obra = (totalCashDirect + finalTotal) * (1 + adminPct + utilPct);
+
+  return true;
+}
+
+function changeActivityPriority(activityId, newPriority) {
+  // newPriority can be 0..12, 'OPEX', 'FINAL', or '' (use original)
+  if (newPriority === '' || newPriority === undefined) {
+    delete state.priority_overrides[activityId];
+  } else {
+    let p = newPriority;
+    if (p !== 'OPEX' && p !== 'FINAL') p = parseInt(newPriority);
+    state.priority_overrides[activityId] = p;
+  }
+  recomputeFromActivities();
+  save();
+  renderAll();
+}
+
+function resetPriorities() {
+  if (!confirm('Restaurar todas las prioridades originales del presupuesto?')) return;
+  state.priority_overrides = {};
+  recomputeFromActivities();
+  save();
+  renderAll();
+}
+
+// =====================================================
+// SAVE PRIORITY CHANGES BACK TO EXCEL
+// =====================================================
+function saveChangesToExcel() {
+  if (!_loadedWorkbook) {
+    alert('Primero importe el archivo Excel desde el boton "Importar Excel" en el header.');
+    return;
+  }
+  if (!state.activities || state.activities.length === 0) {
+    alert('No hay actividades cargadas.');
+    return;
+  }
+  const changedCount = Object.keys(state.priority_overrides).filter(id => {
+    const a = state.activities.find(x => x.id == id);
+    if (!a) return false;
+    return String(state.priority_overrides[id]) !== String(a.originalPriority);
+  }).length;
+  if (changedCount === 0) {
+    alert('No hay cambios de prioridad para guardar.');
+    return;
+  }
+
+  if (!confirm(`Se generara un nuevo archivo Excel con ${changedCount} cambio(s) de prioridad aplicado(s).\n\n` +
+    `Cambios incluyen:\n` +
+    `- Sheet2!G (prioridades por actividad)\n` +
+    `- Etapas!F7:F14 (V.TOTAL por etapa)\n` +
+    `- Etapas Section C (distribucion mensual)\n\n` +
+    `IMPORTANTE: Haga BACKUP del archivo original primero. Algunos formatos visuales (colores, listas desplegables SI/NO en catalogo) pueden perderse en la conversion. Recomendado: abra ambos y copie solo las celdas modificadas al original si quiere preservar el formato.`)) return;
+
+  const wb = _loadedWorkbook;
+  const sheet2 = wb.Sheets['Sheet2'];
+  const etapas = wb.Sheets['Etapas'];
+  if (!sheet2 || !etapas) {
+    alert('Workbook no tiene hojas Sheet2 / Etapas. Revise el archivo importado.');
+    return;
+  }
+
+  // ===== 1. Update Sheet2 col G (Numero actividad) =====
+  let sheet2Changes = 0;
+  state.activities.forEach(a => {
+    const override = state.priority_overrides[a.id];
+    if (override === undefined) return;
+    if (String(override) === String(a.originalPriority)) return;
+    const cellRef = `G${a.id}`;
+    let cellValue;
+    if (typeof override === 'number') {
+      cellValue = { t: 'n', v: override };
+    } else if (override === 'OPEX' || override === 'FINAL') {
+      cellValue = { t: 's', v: override };
+    } else {
+      // Try to parse as number, fallback to string
+      const num = parseInt(override);
+      cellValue = !isNaN(num) ? { t: 'n', v: num } : { t: 's', v: String(override) };
+    }
+    // Preserve any styling
+    const oldCell = sheet2[cellRef];
+    if (oldCell && oldCell.s) cellValue.s = oldCell.s;
+    sheet2[cellRef] = cellValue;
+    sheet2Changes++;
+  });
+
+  // ===== 2. Recompute aggregates =====
+  const etapaTotals = [0,0,0,0,0,0,0,0];
+  let opexTotal = 0, prelimTotal = 0, finalTotal = 0;
+  state.activities.forEach(a => {
+    const p = state.priority_overrides[a.id] !== undefined ? state.priority_overrides[a.id] : a.originalPriority;
+    if (p === 'OPEX') opexTotal += a.vTotal;
+    else if (p === 'FINAL') finalTotal += a.vTotal;
+    else if (p === 0 || p === '0') prelimTotal += a.vTotal;
+    else {
+      const pn = typeof p === 'number' ? p : parseInt(p);
+      if (PRIORITY_TO_ETAPA[pn]) etapaTotals[PRIORITY_TO_ETAPA[pn] - 1] += a.vTotal;
+    }
+  });
+
+  // ===== 3. Update Etapas Section A: F7-F14 V.TOTAL per etapa =====
+  for (let i = 0; i < 8; i++) {
+    const r = 7 + i;
+    const ref = `F${r}`;
+    const old = etapas[ref];
+    etapas[ref] = { t: 'n', v: etapaTotals[i], ...(old && old.s ? { s: old.s } : {}) };
+  }
+
+  // ===== 4. Update Etapas Section C monthly distribution (rows 34-44) =====
+  for (let i = 0; i < 8; i++) {
+    const row = 34 + i;
+    for (let m = 0; m < 14; m++) {
+      const col = String.fromCharCode('C'.charCodeAt(0) + m);
+      const ref = `${col}${row}`;
+      const w = (ETAPA_MONTHLY_WEIGHTS[i] && ETAPA_MONTHLY_WEIGHTS[i][m]) || 0;
+      const old = etapas[ref];
+      etapas[ref] = { t: 'n', v: etapaTotals[i] * w, ...(old && old.s ? { s: old.s } : {}) };
+    }
+  }
+  // R42 OPEX (distribute evenly across 14 months - or keep original profile if preferred)
+  for (let m = 0; m < 14; m++) {
+    const col = String.fromCharCode('C'.charCodeAt(0) + m);
+    const ref = `${col}42`;
+    const old = etapas[ref];
+    etapas[ref] = { t: 'n', v: opexTotal / 14, ...(old && old.s ? { s: old.s } : {}) };
+  }
+  // R43 Prelim (M1 only)
+  for (let m = 0; m < 14; m++) {
+    const col = String.fromCharCode('C'.charCodeAt(0) + m);
+    const ref = `${col}43`;
+    const val = m === 0 ? prelimTotal : 0;
+    const old = etapas[ref];
+    etapas[ref] = { t: 'n', v: val, ...(old && old.s ? { s: old.s } : {}) };
+  }
+  // R44 FINAL (no-cash, stays 0 for cash flow but show informational)
+  for (let m = 0; m < 14; m++) {
+    const col = String.fromCharCode('C'.charCodeAt(0) + m);
+    const ref = `${col}44`;
+    const old = etapas[ref];
+    etapas[ref] = { t: 'n', v: 0, ...(old && old.s ? { s: old.s } : {}) };
+  }
+
+  // ===== 5. Write workbook to file =====
+  try {
+    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true, compression: true });
+    const blob = new Blob([wbout], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const baseName = _loadedFileName.replace(/\.xlsx$/i, '');
+    a.href = url;
+    a.download = `${baseName}_actualizado_${new Date().toISOString().slice(0,10)}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert(`Excel actualizado descargado: ${a.download}\n\n` +
+      `Aplicados:\n` +
+      `- ${sheet2Changes} cambios en Sheet2!G (prioridades)\n` +
+      `- 8 V.TOTAL recalculados en Etapas Section A\n` +
+      `- Distribucion mensual recalculada en Etapas Section C\n\n` +
+      `Las formulas del modelo recalcularan automaticamente al abrir el archivo.\n\n` +
+      `Si quiere preservar formatos visuales del original, abra ambos archivos y copie solo las celdas modificadas.`);
+  } catch (err) {
+    console.error(err);
+    alert('Error generando Excel: ' + err.message);
+  }
+}
+
+function renderActividades() {
+  const tbody = document.getElementById('actividades-body');
+  const summary = document.getElementById('activities-summary');
+  if (!tbody) return;
+
+  if (!state.activities || state.activities.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">No hay actividades cargadas. Use "Importar Excel" para cargar Sheet2 del presupuesto.</td></tr>`;
+    summary.innerHTML = '';
+    return;
+  }
+
+  // Summary by current priority -> etapa
+  const etapaTotals = [0,0,0,0,0,0,0,0];
+  let opexT = 0, prelimT = 0, finalT = 0;
+  state.activities.forEach(a => {
+    const p = state.priority_overrides[a.id] !== undefined ? state.priority_overrides[a.id] : a.originalPriority;
+    if (p === 'OPEX') opexT += a.vTotal;
+    else if (p === 'FINAL') finalT += a.vTotal;
+    else if (p === 0 || p === '0') prelimT += a.vTotal;
+    else {
+      const pn = typeof p === 'number' ? p : parseInt(p);
+      if (PRIORITY_TO_ETAPA[pn]) etapaTotals[PRIORITY_TO_ETAPA[pn] - 1] += a.vTotal;
+    }
+  });
+
+  const changedCount = Object.keys(state.priority_overrides).length;
+  summary.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;font-size:11px;background:var(--bg);padding:12px;border-radius:8px;">
+      ${ETAPAS.map((e, i) => `
+        <div style="background:#fff;padding:8px;border-radius:6px;border-left:3px solid var(--blue);">
+          <div style="color:var(--gray);font-weight:600;text-transform:uppercase">Etapa ${e.n}</div>
+          <div style="font-size:14px;font-weight:800;color:var(--blue)">${fmt(etapaTotals[i])}</div>
+        </div>
+      `).join('')}
+      <div style="background:#fff;padding:8px;border-radius:6px;border-left:3px solid var(--gray);">
+        <div style="color:var(--gray);font-weight:600;text-transform:uppercase">Prelim (P0)</div>
+        <div style="font-size:14px;font-weight:800;color:var(--blue)">${fmt(prelimT)}</div>
+      </div>
+      <div style="background:#fff;padding:8px;border-radius:6px;border-left:3px solid var(--gray);">
+        <div style="color:var(--gray);font-weight:600;text-transform:uppercase">OPEX</div>
+        <div style="font-size:14px;font-weight:800;color:var(--blue)">${fmt(opexT)}</div>
+      </div>
+      <div style="background:#fff;padding:8px;border-radius:6px;border-left:3px solid var(--gray);">
+        <div style="color:var(--gray);font-weight:600;text-transform:uppercase">FINAL (no-cash)</div>
+        <div style="font-size:14px;font-weight:800;color:var(--gray)">${fmt(finalT)}</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--gray)">
+      ${changedCount > 0 ? `<b>${changedCount} actividad${changedCount!==1?'es':''} con prioridad modificada</b>` : 'Todas las prioridades en sus valores originales del presupuesto'}
+      &nbsp;|&nbsp; Caja Necesaria (cash) actual: <b style="color:var(--blue)">${fmt(state.cfg.caja_total)}</b>
+    </div>
+  `;
+
+  // Priority dropdown options
+  const opts = ['<option value="0">0 (Preliminares cliente)</option>'];
+  for (let p = 1; p <= 12; p++) {
+    const etapa = PRIORITY_TO_ETAPA[p];
+    opts.push(`<option value="${p}">${p} -> Etapa ${etapa}</option>`);
+  }
+  opts.push('<option value="OPEX">OPEX (operativos)</option>');
+  opts.push('<option value="FINAL">FINAL (no-cash)</option>');
+  const optionsHtml = opts.join('');
+
+  tbody.innerHTML = state.activities.map((a, idx) => {
+    const cur = state.priority_overrides[a.id] !== undefined ? state.priority_overrides[a.id] : a.originalPriority;
+    const curStr = String(cur);
+    const origStr = String(a.originalPriority);
+    const changed = curStr !== origStr;
+    let etapaLabel = '-';
+    if (cur === 'OPEX') etapaLabel = 'OPEX';
+    else if (cur === 'FINAL') etapaLabel = 'FINAL';
+    else if (cur === 0 || cur === '0') etapaLabel = 'Preliminares (P0)';
+    else {
+      const pn = typeof cur === 'number' ? cur : parseInt(cur);
+      if (PRIORITY_TO_ETAPA[pn]) etapaLabel = `Etapa ${PRIORITY_TO_ETAPA[pn]}`;
+    }
+    const selectHtml = `<select onchange="changeActivityPriority(${a.id}, this.value)" style="padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;background:${changed?'#FFF2CC':'#fff'}">
+      ${optionsHtml.replace(`value="${curStr}"`, `value="${curStr}" selected`)}
+    </select>`;
+    const changeBadge = changed
+      ? `<span style="font-size:10px;color:var(--red);font-weight:700">${origStr} -> ${curStr}</span>`
+      : '<span style="color:var(--gray);font-size:10px">-</span>';
+    return `
+      <tr style="${changed?'background:#FFFBE6':''}">
+        <td>${idx+1}</td>
+        <td style="font-size:11px">${a.desc.length > 80 ? a.desc.slice(0,80)+'...' : a.desc}</td>
+        <td style="font-size:11px;color:var(--gray)">${a.capitulo}</td>
+        <td class="t-num">${fmt(a.vTotal)}</td>
+        <td>${selectHtml}</td>
+        <td style="font-size:11px;font-weight:700;color:var(--blue)">${etapaLabel}</td>
+        <td>${changeBadge}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function saveCfg() {
+  state.cfg = {
+    ...state.cfg,
+    inv_total: parseInt(document.getElementById('cfg-inv').value),
+    valor_catalogo: parseFloat(document.getElementById('cfg-valor').value),
+    precio_avg: parseFloat(document.getElementById('cfg-precio').value),
+    costo_obra: parseFloat(document.getElementById('cfg-obra').value),
+    caja_total: parseFloat(document.getElementById('cfg-caja').value),
+    break_even: parseInt(document.getElementById('cfg-be').value),
+    preventa_min: parseInt(document.getElementById('cfg-pv').value),
+    ritmo_target: parseFloat(document.getElementById('cfg-ritmo').value),
+    ci_default: parseFloat(document.getElementById('cfg-ci').value),
+    plazo_default: parseInt(document.getElementById('cfg-plazo').value),
+    tasa_default: parseFloat(document.getElementById('cfg-tasa').value),
+    mix_contado: parseFloat(document.getElementById('cfg-mix').value),
+    impuestos_pct: parseFloat(document.getElementById('cfg-imp').value)
+  };
+  save();
+  renderAll();
+  alert('Configuracion guardada');
+}
+
+function resetCfg() {
+  if (!confirm('Restaurar configuracion a valores por defecto del modelo?')) return;
+  state.cfg = { ...DEFAULT_CFG };
+  save();
+  renderAll();
+}
+
+// =====================================================
+// TABS
+// =====================================================
+document.getElementById('tabs').addEventListener('click', (e) => {
+  if (!e.target.classList.contains('tab')) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  e.target.classList.add('on');
+  document.querySelectorAll('.panel').forEach(p => p.classList.add('hide'));
+  document.getElementById('p-' + e.target.dataset.p).classList.remove('hide');
+  // Re-render the active panel for proper chart rendering
+  const p = e.target.dataset.p;
+  setTimeout(() => {
+    if (p === 'resumen') renderResumen();
+    else if (p === 'flujo') renderFlujo();
+    else if (p === 'etapas') renderEtapas();
+    else if (p === 'actividades') renderActividades();
+  }, 50);
+});
+
+function renderAll() {
+  const safeRun = (name, fn) => {
+    try { fn(); } catch (e) { console.error('[renderAll]', name, 'failed:', e); }
+  };
+  safeRun('renderVentas', renderVentas);
+  safeRun('renderKPIs', renderKPIs);
+  safeRun('renderResumen', renderResumen);
+  safeRun('renderFlujo', renderFlujo);
+  safeRun('renderEtapas', renderEtapas);
+  safeRun('renderActividades', renderActividades);
+  safeRun('renderConfig', renderConfig);
+}
+
+// =====================================================
+// INIT
+// =====================================================
+load();
+renderAll();
+</script>
+</body>
+</html>
