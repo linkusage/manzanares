@@ -1,1 +1,912 @@
-{"sales":[]}
+{
+  "sales": [],
+  "activities": [
+    {
+      "id": 5,
+      "desc": "Descapote, se contempla una profundidad de 15 cmVía interna",
+      "capitulo": "Caseta de Porteria y porton",
+      "vTotal": 409270.5,
+      "originalPriority": 9,
+      "currentPriority": 9
+    },
+    {
+      "id": 6,
+      "desc": "Servicio de corte para nivelación con medios mecánicos en trazado de vías, no incluye  disposición final del material.(Ver anexos, memorias y diseños )",
+      "capitulo": "Caseta de Porteria y porton",
+      "vTotal": 954696.6,
+      "originalPriority": 9,
+      "currentPriority": 9
+    },
+    {
+      "id": 7,
+      "desc": "Intalacion de casaprefabricada de 80M2 con instalaciones electricas e hidrosanitarias",
+      "capitulo": "Caseta de Porteria y porton",
+      "vTotal": 130000000,
+      "originalPriority": 9,
+      "currentPriority": 9
+    },
+    {
+      "id": 8,
+      "desc": "Construccion de chup de basura",
+      "capitulo": "Caseta de Porteria y porton",
+      "vTotal": 28500000,
+      "originalPriority": 8,
+      "currentPriority": 8
+    },
+    {
+      "id": 9,
+      "desc": "Circuito cerrado de TV y video portero",
+      "capitulo": "Caseta de Porteria y porton",
+      "vTotal": 90000000,
+      "originalPriority": 10,
+      "currentPriority": 10
+    },
+    {
+      "id": 10,
+      "desc": "Construccion de Poteria mecanizada ",
+      "capitulo": "Mejora de zonas",
+      "vTotal": 28000000,
+      "originalPriority": 11,
+      "currentPriority": 11
+    },
+    {
+      "id": 11,
+      "desc": "Porton Metalico Manual",
+      "capitulo": "Mejora de zonas",
+      "vTotal": 9000000,
+      "originalPriority": 12,
+      "currentPriority": 12
+    },
+    {
+      "id": 12,
+      "desc": "Parque Infantil",
+      "capitulo": "Mejora de zonas",
+      "vTotal": 35000000,
+      "originalPriority": 12,
+      "currentPriority": 12
+    },
+    {
+      "id": 13,
+      "desc": "Cancha Polideportiva ",
+      "capitulo": "Mejora de zonas",
+      "vTotal": 45000000,
+      "originalPriority": 12,
+      "currentPriority": 12
+    },
+    {
+      "id": 14,
+      "desc": "Gimnasio al aire libre (o parque biosaludable) es una excelente adición para zonas comunes, ya que fomenta el bienestar y tiene un costo de mantenimiento relativamente bajo",
+      "capitulo": "Mejora de zonas",
+      "vTotal": 42000000,
+      "originalPriority": 12,
+      "currentPriority": 12
+    },
+    {
+      "id": 15,
+      "desc": "Descapote, se contempla una profundidad de 15 cmVía interna",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 52280735.3807487,
+      "originalPriority": 1,
+      "currentPriority": 1
+    },
+    {
+      "id": 16,
+      "desc": "Servicio de corte para nivelación con medios mecánicos en trazado de vías, no incluye  disposición final del material.(Ver anexos, memorias y diseños )",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 48781664.2670317,
+      "originalPriority": 2,
+      "currentPriority": 2
+    },
+    {
+      "id": 17,
+      "desc": "Suministro de materiales y construcción de vía interna de 7 m. Incluye afirmado de 0,15 m sub base de 0,07 m, base de 0,07 m  .Incluye mejoramiento con material CBR>15% con una capa 0 m  y compactación con medios mecánicos del material al 95% de proctor modificado. Incluye mejoramiento con geotextil e incluye  manto permanente para control de erosión,  no incluye nivelación  (Ver anexos, memorias y diseños )",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 439220802.90099,
+      "originalPriority": 7,
+      "currentPriority": 7
+    },
+    {
+      "id": 18,
+      "desc": "Suministro de materiales y construcción de vía interna de 7 m. Incluye afirmado de 0,15 m sub base de 0,07 m, base de 0,07 m  .Incluye mejoramiento con material CBR>15% con una capa 0 m  y compactación con medios mecánicos del material al 95% de proctor modificado. Incluye mejoramiento con geotextil e incluye  manto permanente para control de erosión,  no incluye nivelación  (Ver anexos, memorias y diseños )",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 34587530.34,
+      "originalPriority": 7,
+      "currentPriority": 7
+    },
+    {
+      "id": 19,
+      "desc": "Servicio de relleno para nivelación en área de  trazado de vías que incluye suministro e instalación de material que cumpla con especificaciones INVIAS. (Ver anexos, memorias y diseños )",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 358689684.788896,
+      "originalPriority": 7,
+      "currentPriority": 7
+    },
+    {
+      "id": 20,
+      "desc": "Construcción de estrutura coulvert de 5 m de longitud incluye materiales de refuerzo, excavaciones y llenos. No incluye retiro de material sobrante",
+      "capitulo": "VIAS NUEVAS",
+      "vTotal": 145693738.3632,
+      "originalPriority": 7,
+      "currentPriority": 7
+    },
+    {
+      "id": 21,
+      "desc": "Roceria o corte de pastos, maleza y árboles menores a 2 metros de altura",
+      "capitulo": "MEJORAMIENTO VIAS EXISTENTES",
+      "vTotal": 4968889.272,
+      "originalPriority": 3,
+      "currentPriority": 3
+    },
+    {
+      "id": 22,
+      "desc": "Mejoramiento de la vía de acceso externa . Incluye afirmado de 0,15 m y compactación con medios mecánicos del material al 95% de proctor modificado. Se considera una vía de 4 m de ancho, no incluye nivelación.",
+      "capitulo": "MEJORAMIENTO VIAS EXISTENTES",
+      "vTotal": 254220852.588581,
+      "originalPriority": 5,
+      "currentPriority": 5
+    },
+    {
+      "id": 23,
+      "desc": "Construcción de estrutura coulvert de 5 m de longitud incluye materiales de refuerzo, excavaciones y llenos. No incluye retiro de material sobrante",
+      "capitulo": "MEJORAMIENTO VIAS EXISTENTES",
+      "vTotal": 72846869.1816,
+      "originalPriority": 7,
+      "currentPriority": 7
+    },
+    {
+      "id": 24,
+      "desc": "Descapote, se contempla una profundidad de 15 cm",
+      "capitulo": "MOVIMIENTO DE TIERRA OFICNA",
+      "vTotal": 102879689.82,
+      "originalPriority": 6,
+      "currentPriority": 6
+    },
+    {
+      "id": 25,
+      "desc": "Servicio de Excavacion en área de implantación  ",
+      "capitulo": "MOVIMIENTO DE TIERRA OFICNA",
+      "vTotal": 542540700,
+      "originalPriority": 6,
+      "currentPriority": 6
+    },
+    {
+      "id": 26,
+      "desc": "Servicio de relleno en área de implantación  que incluye suministro e instalación de material de corte del proyecto,",
+      "capitulo": "MOVIMIENTO DE TIERRA OFICNA",
+      "vTotal": 533038212,
+      "originalPriority": 6,
+      "currentPriority": 6
+    },
+    {
+      "id": 27,
+      "desc": "Levantamiento Topografico",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 6200000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 28,
+      "desc": "Servicio de Desarrollo de proyecto",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 182400000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 29,
+      "desc": "Localizacion y replanteo ",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 4200000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 30,
+      "desc": "Servicios de estudios Hidrologicos y saneamiento",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 16857000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 31,
+      "desc": "Servcio de avaluo 1",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 4500000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 32,
+      "desc": "Servcio de avaluo 2",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 3000000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 33,
+      "desc": "Acessorias Comercial",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 2500000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 34,
+      "desc": "Renderizacion",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 6100000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 35,
+      "desc": "Acessorias Legal catastro",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 6000000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 36,
+      "desc": "Servcion de planeacion",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 600000,
+      "originalPriority": 0,
+      "currentPriority": 0
+    },
+    {
+      "id": 37,
+      "desc": "Servicios varios Transporte Juan P",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 30000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 38,
+      "desc": "Servicios varios Comercial Andrea",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 30000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 39,
+      "desc": "Servicios varios Comercial y marca Manuela",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 30000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 40,
+      "desc": "Servicios varios Tramites Rosa",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 30000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 41,
+      "desc": "Gastos de Publicidad ",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 144000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 42,
+      "desc": "Descuento por lotes entregados a Compromisos",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 1200000000,
+      "originalPriority": "FINAL",
+      "currentPriority": "FINAL"
+    },
+    {
+      "id": 43,
+      "desc": "Descuento por areas Cedidas",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 1280000000,
+      "originalPriority": "FINAL",
+      "currentPriority": "FINAL"
+    },
+    {
+      "id": 44,
+      "desc": "Gastos de acesoria Legal",
+      "capitulo": "RELACION DE GASTOS",
+      "vTotal": 25000000,
+      "originalPriority": "OPEX",
+      "currentPriority": "OPEX"
+    },
+    {
+      "id": 45,
+      "desc": "Campamento (con seguridad, techo en zinc, mesas de trabajo y piso en concreto)",
+      "capitulo": "PRELIMINARES",
+      "vTotal": 4337600,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 46,
+      "desc": "Demoliciones de estructuras existentes.",
+      "capitulo": "PRELIMINARES",
+      "vTotal": 2302433.4,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 47,
+      "desc": "Descapote y limpieza",
+      "capitulo": "PRELIMINARES",
+      "vTotal": 8302970,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 48,
+      "desc": "Localización y replanteo.",
+      "capitulo": "PRELIMINARES",
+      "vTotal": 3647569,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 49,
+      "desc": "Excavación en cielo abierto para estructuras hidráulicas",
+      "capitulo": "Excavación manual",
+      "vTotal": 1826622,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 50,
+      "desc": "Excavación manual en zanja de 0-1m para tubería",
+      "capitulo": "Excavación manual",
+      "vTotal": 45473446.8,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 51,
+      "desc": "Llenos con arena e=10cm",
+      "capitulo": "Llenos compactados",
+      "vTotal": 10828050,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 52,
+      "desc": "Llenos compactado con material seleccionado.",
+      "capitulo": "Llenos compactados",
+      "vTotal": 28130954.4,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 53,
+      "desc": "Cargue retiro y disposición final del material sobrante",
+      "capitulo": "Transporte de material",
+      "vTotal": 1158349.5,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 54,
+      "desc": "Suministro e instalación de concreto impermeabilizado de 21 Mpa.",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 2185791.3,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 55,
+      "desc": "Suministro e instalación de rejilla en acero de 0.61x0.40.",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 519396,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 56,
+      "desc": "Suministro e instalación de compuertas en lámina de acero de 0.40x0.40",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 923792,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 57,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2 para bocatoma",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 332775.3,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 58,
+      "desc": "Sumistro e instalación de desague de 6\" PVC NOVAFORT",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 566640,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 59,
+      "desc": "Suministro e instalación de piedra pegada para protección de cauce",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 1.",
+      "vTotal": 233452.2,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 60,
+      "desc": "Suministro e instalación de concreto impermeabilizado de 21 Mpa.",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 2185791.3,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 61,
+      "desc": "Suministro e instalación de rejilla en acero de 0.61x0.40.",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 519396,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 62,
+      "desc": "Suministro e instalación de compuertas en lámina de acero de 0.40x0.40",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 923792,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 63,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2 para bocatoma",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 332775.3,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 64,
+      "desc": "Sumistro e instalación de desague de 6\" PVC NOVAFORT",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 566640,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 65,
+      "desc": "Suministro e instalación de piedra pegada para protección de cauce",
+      "capitulo": "Suministro e instalación de bocatoma para el sistema 2.",
+      "vTotal": 233452.2,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 66,
+      "desc": "Suministro e instalación de concreto impermeabilizado de 21 Mpa.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 5402027.07,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 67,
+      "desc": "Suministro e instalación de concreto simple para cajas de válvulas.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 1953096,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 68,
+      "desc": "Suministro e instalación de concreto simple para anclajes de accesorios de 21 Mpa.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 61548.88,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 69,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 1839184.7,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 70,
+      "desc": "Suministro e instalación de tubería de desague de 6\" PVC NF",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 491490,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 71,
+      "desc": "Suministro e instalación de válvula mariposa tipo waffer de 6\". Inlcuye unión universal brida por brida",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 1785450,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 72,
+      "desc": "Suministro e instalación de codo 6x90 HD",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 185122,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 73,
+      "desc": "Suministro e instalación de tubería para BYPASS de 3\" PVC.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 532788,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 74,
+      "desc": "Suministro e instalación de válvula mariposa tipo waffer de 3\". Incluye unión universal por brida.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 1032176,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 75,
+      "desc": "Suministro e instalación de codo 3x90 HD",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 1.",
+      "vTotal": 225344,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 76,
+      "desc": "Suministro e instalación de concreto impermeabilizado de 21 Mpa.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 5402027.07,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 77,
+      "desc": "Suministro e instalación de concreto simple para cajas de válvulas.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 1953096,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 78,
+      "desc": "Suministro e instalación de concreto simple para anclajes de accesorios de 21 Mpa.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 1839184.7,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 79,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 491490,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 80,
+      "desc": "Suministro e instalación de tubería de desague de 6\" PVC NF",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 1785450,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 81,
+      "desc": "Suministro e instalación de válvula mariposa tipo waffer de 6\". Inlcuye unión universal brida por brida",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 185122,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 82,
+      "desc": "Suministro e instalación de codo 6x90 HD",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 532788,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 83,
+      "desc": "Suministro e instalación de tubería para BYPASS de 3\" PVC.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 1032176,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 84,
+      "desc": "Suministro e instalación de válvula mariposa tipo waffer de 3\". Incluye unión universal por brida.",
+      "capitulo": "Suministro e instalación de tanque desarenador para el sistema 2.",
+      "vTotal": 225344,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 85,
+      "desc": "Suministro e instalación de concreto impermeabilizado para cimentación de PTAP. Incluye nivelación topográfica.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 7362989.51,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 86,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 1591426.12,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 87,
+      "desc": "Suministro e instalación  de lámina rolada en acero calibre 18 . Incluye pernos, empaques y fondo.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 49239288,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 88,
+      "desc": "Suministro e instalación de tubería perforada 3\" PVC para falso fondo.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 1994615,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 89,
+      "desc": "Suministro e instalación de lecho filtrante. Incluye grava y arena según diseño.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 5298931.14,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 90,
+      "desc": "Suministro e instalación de tubería de 3\" PVC para conexión a planta.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 336942,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 91,
+      "desc": "Suministro e instalación de sistema de cloración.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 2809335,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 92,
+      "desc": "Suministro de equipos de laboratorio. Incluye equipos para medición de turbiedad, pH y cloro residual.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 7282926,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 93,
+      "desc": "Marcha blanca",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 6503085,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 94,
+      "desc": "Suministro e instalación de válvula de purga de 2\". Incluye tee bridada 2x2, unión universal por brida 2\" y brida loca 2\" para mantenimiento de planta.",
+      "capitulo": "Suministro e instalación de PTAP",
+      "vTotal": 631008,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 95,
+      "desc": "Suministro e instalación de concreto para cimentación de tanque de almacenamiento de 21Mpa.",
+      "capitulo": "Suministro e instalación de tanque de almacenamiento para el sistema 2.",
+      "vTotal": 7254745.41,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 96,
+      "desc": "Suministro e instalación de acero de refuerzo de 4200 Kg/cm2",
+      "capitulo": "Suministro e instalación de tanque de almacenamiento para el sistema 2.",
+      "vTotal": 2019379.81,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 97,
+      "desc": "Suministro e instalación  de lámina rolada en acero calibre . Incluye pernos, empaques y fondo.  Incluye techo en lámina pintada apoyada en perfiles. Incluye escalera gato por dentro y por fuera.",
+      "capitulo": "Suministro e instalación de tanque de almacenamiento para el sistema 2.",
+      "vTotal": 127613298,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 98,
+      "desc": "Suministro e instalación de escalera de gato.",
+      "capitulo": "Suministro e instalación de tanque de almacenamiento para el sistema 2.",
+      "vTotal": 4819740,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 99,
+      "desc": "Suministro e instalación de macromedidores 3\".",
+      "capitulo": "Suministro e instalación de tanque de almacenamiento para el sistema 2.",
+      "vTotal": 11355444,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 100,
+      "desc": "Suministro e instalación de tubería de 3\" PVC RDE21.",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 74730500,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 101,
+      "desc": "Suministro e instalación de válvula reductoras de presión de 3\".",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 7623210,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 102,
+      "desc": "Suministro e instalación de válvula mariposa tipo waffer de 3\". Inlcuye unión universal brida por brida",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 9125382,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 103,
+      "desc": "Suministro e instalación de válvula reguladoras de presión de 3\".",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 4527700,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 104,
+      "desc": "Suministro e instalación de válvula de purga de 3\". Incluye tee bridada 3x3, unión universal por brida 3\" y brida loca 3\".",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 3155040,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 105,
+      "desc": "Suministro e instalación de válvula de cheque de 3\". Incluye collar de derivación, niples y válvula de aislamiento de 1\".",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 726025,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 106,
+      "desc": "Sumistro e instalación de ventosas de 1\"",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 5019240,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 107,
+      "desc": "Suministro e instalación de collarines de 2x1",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 996540,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 108,
+      "desc": "Suministro e instalación de cajas de válvulas en concreto simple.",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 22948878,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 109,
+      "desc": "Suministro e instalación codo 2x45 HD UM",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 814793,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 110,
+      "desc": "Suministro e instalación codo 2x22.5 HD UM",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 1244087,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 111,
+      "desc": "Valvula de control de nivel de 3\"",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 2642530,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 112,
+      "desc": "Suministro e instalación de micromedidores de 1/2\" para acometida domiciliaria.",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 39634443,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 113,
+      "desc": "Suministro e instalación de tubería para domiciliaria PF+UAD 1/2\".",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 29737000,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 114,
+      "desc": "Suministro e instalación de conexión de domiciliaria. Incluye: válvula de corte de 1/2\", collarín de derivación de 1/2\" + caja.",
+      "capitulo": "Suministro e instalación de tubería de 2\" para el sistema 1 y sistema 2.",
+      "vTotal": 10745091,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 115,
+      "desc": "Suministro, transporte e instalación de sistema integrado prefabricado para tramiento de aguas residuales domesticas (CAPACIDAD DE 50.000 litros), según diseño y especificaciones técnicas (INCLUYE TRAMPA DE GRASAS,ACCESORIOS PVC, EXCAVACION Y NIVELACION DEL TERRENO) - Ver manual de instalación adjunto.",
+      "capitulo": "Suministro e instalación de sistema integrado de tratamiento AR",
+      "vTotal": 62549970,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 116,
+      "desc": "Sistema de tratamiento de aguas residuales ",
+      "capitulo": "Suministro e instalación de sistema integrado de tratamiento AR",
+      "vTotal": 150000000,
+      "originalPriority": 4,
+      "currentPriority": 4
+    },
+    {
+      "id": 117,
+      "desc": "Intalacion de sistema de alcantarillado ",
+      "capitulo": "Suministro e instalación de sistema integrado de tratamiento AR",
+      "vTotal": 120000000,
+      "originalPriority": 4,
+      "currentPriority": 4
+    }
+  ],
+  "priority_overrides": {},
+  "updatedAt": "2026-10-03T20:06:40.917Z",
+  "updatedBy": "anonimo"
+}
