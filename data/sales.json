@@ -1,22 +1,5 @@
 {
-  "sales": [
-    {
-      "id": 1791672688802,
-      "lote": "95",
-      "etapa": 1,
-      "cliente": "prueba",
-      "cat": "Plus",
-      "fecha": "2026-10-10",
-      "valor": 560932880,
-      "tipo": "credito",
-      "status": "activa",
-      "cipct": 30,
-      "plazo": 84,
-      "tasa": 13,
-      "sist": "frances",
-      "fpago": "2026-10-10"
-    }
-  ],
+  "sales": [],
   "activities": [
     {
       "id": 5,
@@ -924,6 +907,6 @@
     }
   ],
   "priority_overrides": {},
-  "updatedAt": "2026-10-10T22:59:02.883Z",
+  "updatedAt": "2026-10-10T23:05:10.349Z",
   "updatedBy": "anonimo"
 }
